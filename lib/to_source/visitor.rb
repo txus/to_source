@@ -20,6 +20,10 @@ module ToSource
       emit node.value.to_s
     end
 
+    def float_literal(node, parent)
+      emit node.value.to_s
+    end
+
     def string_literal(node, parent)
       emit ?" << node.string.to_s << ?"
     end
