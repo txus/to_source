@@ -18,7 +18,7 @@ module ToSource
 
     def local_variable_assignment(node, parent)
       emit "%s = " % node.name
-      node.value.visit self, node
+      node.value.lazy_visit self, node
       newline
     end
 
