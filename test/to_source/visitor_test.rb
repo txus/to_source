@@ -6,7 +6,7 @@ module ToSource
     def visit(code)
       visitor = Visitor.new
       ast     = code.to_ast
-      ast.lazy_visit(visitor)
+      ast.visit(visitor)
       visitor.output
     end
 
