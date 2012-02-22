@@ -1,6 +1,6 @@
-# tocode
+# to_source
 
-Tocode is a little Rubinius gem that enables Abstract Syntax Tree nodes to
+to_source is a little Rubinius gem that enables Abstract Syntax Tree nodes to
 transform themselves into source code. It's the reverse of Rubinius' builtin
 `#to_ast` method. See for yourself:
 
@@ -11,7 +11,7 @@ transform themselves into source code. It's the reverse of Rubinius' builtin
             @value=#<Rubinius::AST::FixnumLiteral:0x21bc @value=123 @line=1>
             @variable=nil @line=1 @name=:a>
 
-    ast.to_code
+    ast.to_source
     # => "a = 123"
 
 ## WIP!
@@ -23,9 +23,9 @@ about its progress :)
 
 Put this in your Gemfile:
 
-    gem 'tocode'
+    gem 'to_source'
 
-And just call `#to_code` in any AST node!
+And just call `#to_source` in any AST node!
 
 ## Who's this
 

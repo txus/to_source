@@ -1,7 +1,7 @@
 require 'minitest/autorun'
-require 'tocode'
+require 'to_source'
 
-class TocodeTest < MiniTest::Unit::TestCase
+class ToSourceTest < MiniTest::Unit::TestCase
   def test_foo
     assert_equal true, true
   end
