@@ -79,5 +79,20 @@ module ToSource
       end
       emit node.name
     end
+
+    def send_with_arguments(node, parent)
+      send(node, parent)
+      emit ?(
+      node.arguments.lazy_visit self, node
+      emit ?)
+    end
+
+    def actual_arguments(node, parent)
+      body = node.array
+      body.each_with_index do |argument, index|
+        argument.lazy_visit self, parent
+        emit ', ' unless body.length == index + 1 # last element
+      end
+    end
   end
 end

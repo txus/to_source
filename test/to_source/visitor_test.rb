@@ -50,8 +50,12 @@ module ToSource
       assert_source '/.*/'
     end
 
-    def test_call
+    def test_send
       assert_source 'foo.bar'
+    end
+
+    def test_send_with_arguments
+      assert_source 'foo.bar(:baz, :yeah)'
     end
   end
 end
