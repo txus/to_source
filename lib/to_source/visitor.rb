@@ -14,6 +14,7 @@ module ToSource
 
     def local_variable_assignment(node, parent)
       emit "%s = " % node.name
+      node.value.visit self, node
     end
 
     def fixnum_literal(node, parent)
@@ -26,6 +27,17 @@ module ToSource
 
     def string_literal(node, parent)
       emit ?" << node.string.to_s << ?"
+    end
+
+    def array_literal(node, parent)
+      body = node.body
+
+      emit '['
+      node.body.each_with_index do |node, index|
+        node.visit self, node
+        emit ', ' unless body.length == index + 1 # last element
+      end
+      emit ']'
     end
   end
 end

@@ -6,7 +6,7 @@ module ToSource
     def visit(code)
       visitor = Visitor.new
       ast     = code.to_ast
-      ast.visit(visitor)
+      ast.lazy_visit(visitor)
       visitor.output
     end
 
@@ -28,6 +28,10 @@ module ToSource
 
     def test_string_literal
       assert_source '"foo"'
+    end
+
+    def test_array_literal
+      assert_source '[1, 2, 3]'
     end
   end
 end
