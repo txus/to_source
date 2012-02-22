@@ -59,5 +59,11 @@ module ToSource
       end
       emit '}'
     end
+
+    def range(node, parent)
+      node.start.visit self, node
+      emit '..'
+      node.finish.visit self, node
+    end
   end
 end

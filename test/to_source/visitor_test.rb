@@ -41,5 +41,9 @@ module ToSource
     def test_hash_literal
       assert_source '{:answer => 42, :bar => :baz}'
     end
+
+    def test_range
+      assert_source '20..34'
+    end
   end
 end
