@@ -45,5 +45,9 @@ module ToSource
     def test_range
       assert_source '20..34'
     end
+
+    def test_regex
+      assert_source '/.*/'
+    end
   end
 end

@@ -65,5 +65,11 @@ module ToSource
       emit '..'
       node.finish.visit self, node
     end
+
+    def regex_literal(node, parent)
+      emit ?/
+      emit node.source
+      emit ?/
+    end
   end
 end
