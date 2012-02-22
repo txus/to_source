@@ -30,8 +30,16 @@ module ToSource
       assert_source '"foo"'
     end
 
+    def test_symbol_literal
+      assert_source ':foo'
+    end
+
     def test_array_literal
       assert_source '[1, 2, 3]'
+    end
+
+    def test_hash_literal
+      assert_source '{:answer => 42, :bar => :baz}'
     end
   end
 end

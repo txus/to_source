@@ -29,15 +29,35 @@ module ToSource
       emit ?" << node.string.to_s << ?"
     end
 
+    def symbol_literal(node, parent)
+      emit ?: << node.value.to_s
+    end
+
     def array_literal(node, parent)
       body = node.body
 
       emit '['
-      node.body.each_with_index do |node, index|
+      body.each_with_index do |node, index|
         node.visit self, node
         emit ', ' unless body.length == index + 1 # last element
       end
       emit ']'
+    end
+
+    def hash_literal(node, parent)
+      body = node.array.each_slice(2)
+
+      emit '{'
+      body.each_with_index do |slice, index|
+        key, value = slice
+
+        key.visit self, node
+        emit " => "
+        value.visit self, node
+
+        emit ', ' unless body.to_a.length == index + 1 # last element
+      end
+      emit '}'
     end
   end
 end
