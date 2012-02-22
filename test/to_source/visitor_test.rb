@@ -14,8 +14,16 @@ module ToSource
       assert_equal code, visit(code)
     end
 
-    def test_foo
-      assert_source "foo = 1\n"
+    def test_local_assignment
+      assert_source "foo = 1"
+    end
+
+    def test_fixnum_literal
+      assert_source "1"
+    end
+
+    def test_string_literal
+      assert_source '"foo"'
     end
   end
 end
