@@ -14,7 +14,7 @@ module ToSource
 
     def local_variable_assignment(node, parent)
       emit "%s = " % node.name
-      node.value.visit self, node
+      node.value.lazy_visit self, node
     end
 
     def fixnum_literal(node, parent)
@@ -38,7 +38,7 @@ module ToSource
 
       emit '['
       body.each_with_index do |node, index|
-        node.visit self, node
+        node.lazy_visit self, node
         emit ', ' unless body.length == index + 1 # last element
       end
       emit ']'
@@ -51,9 +51,9 @@ module ToSource
       body.each_with_index do |slice, index|
         key, value = slice
 
-        key.visit self, node
+        key.lazy_visit self, node
         emit " => "
-        value.visit self, node
+        value.lazy_visit self, node
 
         emit ', ' unless body.to_a.length == index + 1 # last element
       end
@@ -61,15 +61,23 @@ module ToSource
     end
 
     def range(node, parent)
-      node.start.visit self, node
+      node.start.lazy_visit self, node
       emit '..'
-      node.finish.visit self, node
+      node.finish.lazy_visit self, node
     end
 
     def regex_literal(node, parent)
       emit ?/
       emit node.source
       emit ?/
+    end
+
+    def send(node, parent)
+      unless node.receiver.is_a?(Rubinius::AST::Self)
+        node.receiver.lazy_visit self, node
+        emit ?.
+      end
+      emit node.name
     end
   end
 end

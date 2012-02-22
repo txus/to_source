@@ -9,7 +9,7 @@ module Rubinius
       #
       # Returns nothing.
       def lazy_visit(visitor, parent=nil)
-        visitor.send self.node_name, self, parent
+        visitor.__send__ self.node_name, self, parent
       end
     end
   end

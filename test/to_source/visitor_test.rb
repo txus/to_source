@@ -49,5 +49,9 @@ module ToSource
     def test_regex
       assert_source '/.*/'
     end
+
+    def test_call
+      assert_source 'foo.bar'
+    end
   end
 end
