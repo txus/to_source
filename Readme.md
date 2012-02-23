@@ -14,12 +14,9 @@ transform themselves into source code. It's the reverse of Rubinius' builtin
     ast.to_source
     # => "a = 123"
 
-## WIP!
-
-It's a work in progress, not yet released. Watch the project to get noticed
-about its progress :)
-
 ## Installing
+
+to_source needs Rubinius 2.0 to run, in either 1.8 or 1.9 mode.
 
 Put this in your Gemfile:
 
