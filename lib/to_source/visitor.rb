@@ -107,6 +107,8 @@ module ToSource
     end
 
     def send_with_arguments(node, parent)
+      return if process_binary_operator(node, parent) # 1 * 2, a / 3, true && false
+
       unless node.receiver.is_a?(Rubinius::AST::Self)
         node.receiver.lazy_visit self, node
         emit ?.
@@ -173,6 +175,52 @@ module ToSource
         expression.lazy_visit self, parent
         emit "\n"
       end
+    end
+
+    def not(node, parent)
+      emit ?!
+      node.value.lazy_visit self, parent
+    end
+
+    def and(node, parent)
+      node.left.lazy_visit self, node
+      emit ' && '
+      node.right.lazy_visit self, node
+    end
+
+    def or(node, parent)
+      node.left.lazy_visit self, node
+      emit ' || '
+      node.right.lazy_visit self, node
+    end
+
+    def op_assign_and(node, parent)
+      node.left.lazy_visit self, node
+      emit ' && '
+      node.right.lazy_visit self, node
+    end
+
+    def op_assign_or(node, parent)
+      node.left.lazy_visit self, node
+      emit ' || '
+      node.right.lazy_visit self, node
+    end
+
+    private
+
+    def process_binary_operator(node, parent)
+      operators = %w(+ - * / & | <<).map(&:to_sym)
+      return false unless operators.include?(node.name)
+      return false if node.arguments.array.length != 1
+
+      operand = node.arguments.array[0]
+
+      unless node.receiver.is_a?(Rubinius::AST::Self)
+        node.receiver.lazy_visit self, node
+      end
+
+      emit ' ' << node.name.to_s << ' '
+      operand.lazy_visit self, node
     end
   end
 end

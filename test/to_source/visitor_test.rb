@@ -89,5 +89,31 @@ module ToSource
     def test_lambda
       assert_source "lambda do |a, b|\n  a\nend"
     end
+
+    def test_binary_operators
+      %w(+ - * / & | && || <<).each do |operator|
+        assert_source "1 #{operator} 2"
+      end
+    end
+
+    def test_expands_binary_equal
+      assert_converts "a = a + 2", "a += 2"
+      assert_converts "a = a - 2", "a -= 2"
+      assert_converts "a = a * 2", "a *= 2"
+      assert_converts "a = a / 2", "a /= 2"
+      assert_converts "a && a = 2", "a &&= 2"
+      assert_converts "a || a = 2", "a ||= 2"
+
+      # %w(+= -= *= /= &&= ||=).each do |assign_operator|
+      #   operator = assign_operator[0..-2]
+      #   assert_converts "a = a #{operator} 2", "a #{operator} 2"
+      # end
+    end
+
+    def test_unary_operators
+      %w(!).each do |operator|
+        assert_source "#{operator}1"
+      end
+    end
   end
 end
