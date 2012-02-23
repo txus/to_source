@@ -87,6 +87,12 @@ module ToSource
       node.finish.lazy_visit self, node
     end
 
+    def range_exclude(node, parent)
+      node.start.lazy_visit self, node
+      emit '...'
+      node.finish.lazy_visit self, node
+    end
+
     def regex_literal(node, parent)
       emit '/'
       emit node.source
