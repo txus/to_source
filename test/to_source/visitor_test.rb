@@ -22,6 +22,10 @@ module ToSource
       assert_source "foo = 1"
     end
 
+    def test_local_access
+      assert_source "foo = 1\nfoo"
+    end
+
     def test_fixnum_literal
       assert_source "1"
     end
@@ -88,6 +92,10 @@ module ToSource
 
     def test_lambda
       assert_source "lambda do |a, b|\n  a\nend"
+    end
+
+    def test_proc
+      assert_source "Proc.new do\n  a\nend"
     end
 
     def test_binary_operators

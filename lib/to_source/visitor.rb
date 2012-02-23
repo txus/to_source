@@ -163,17 +163,18 @@ module ToSource
       else
         emit current_indentation
         node.body.lazy_visit self, parent
-        emit "\n"
       end
 
+      emit "\n"
       emit 'end'
     end
 
     def block(node, parent, indent=false)
-      node.array.each do |expression|
+      body = node.array
+      body.each_with_index do |expression, index|
         emit current_indentation if indent
         expression.lazy_visit self, parent
-        emit "\n"
+        emit "\n" unless body.length == index + 1 # last element
       end
     end
 
@@ -204,6 +205,10 @@ module ToSource
       node.left.lazy_visit self, node
       emit ' || '
       node.right.lazy_visit self, node
+    end
+
+    def constant_access(node, parent)
+      emit node.name
     end
 
     private
