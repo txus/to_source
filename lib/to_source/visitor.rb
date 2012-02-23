@@ -211,6 +211,12 @@ module ToSource
       emit node.name
     end
 
+    def scoped_constant(node, parent)
+      node.parent.lazy_visit self, node
+      emit '::'
+      emit node.name
+    end
+
     private
 
     def process_binary_operator(node, parent)

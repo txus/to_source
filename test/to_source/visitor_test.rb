@@ -26,6 +26,14 @@ module ToSource
       assert_source "foo = 1\nfoo"
     end
 
+    def test_constant_access
+      assert_source "Rubinius"
+    end
+
+    def test_scoped_constant_access
+      assert_source "Rubinius::Debugger"
+    end
+
     def test_fixnum_literal
       assert_source "1"
     end
