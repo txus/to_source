@@ -1,4 +1,4 @@
-# to_source
+# to_source [![Build Status](https://secure.travis-ci.org/txus/to_source.png)](http://travis-ci.org/txus/to_source)
 
 to_source is a little Rubinius gem that enables Abstract Syntax Tree nodes to
 transform themselves into source code. It's the reverse of Rubinius' builtin
