@@ -8,8 +8,11 @@ module Rubinius
       #           node names.
       #
       # Returns nothing.
-      def lazy_visit(visitor, parent=nil)
-        visitor.__send__ self.node_name, self, parent
+      def lazy_visit(visitor, parent=nil, indent=false)
+        args = [self.node_name, self, parent]
+        args.push true if indent
+
+        visitor.__send__ *args
       end
     end
   end
