@@ -103,17 +103,11 @@ module ToSource
       assert_converts "a = a / 2", "a /= 2"
       assert_converts "a && a = 2", "a &&= 2"
       assert_converts "a || a = 2", "a ||= 2"
-
-      # %w(+= -= *= /= &&= ||=).each do |assign_operator|
-      #   operator = assign_operator[0..-2]
-      #   assert_converts "a = a #{operator} 2", "a #{operator} 2"
-      # end
     end
 
     def test_unary_operators
-      %w(!).each do |operator|
-        assert_source "#{operator}1"
-      end
+      assert_source "!1"
+      assert_source "!!1"
     end
   end
 end
