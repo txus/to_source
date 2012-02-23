@@ -71,7 +71,7 @@ module ToSource
     end
 
     def test_send_with_arguments
-      assert_source 'foo.bar(:baz, :yeah)'
+      assert_converts 'foo.bar(:baz, :yeah)', 'foo.bar :baz, :yeah'
     end
 
     def test_send_with_arguments_and_empty_block
