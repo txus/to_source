@@ -18,7 +18,14 @@ transform themselves into source code. It's the reverse of Rubinius' builtin
 
 to_source needs Rubinius 2.0 to run, in either 1.8 or 1.9 mode.
 
-Put this in your Gemfile:
+To install it as a gem:
+
+    $ gem install to_source
+
+And `require 'to_source'` from your code. Automatically, your AST nodes respond
+to the `#to_source` method.
+
+But if you're using Bundler, just put this in your Gemfile:
 
     gem 'to_source'
 
