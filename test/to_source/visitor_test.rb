@@ -1,8 +1,8 @@
-require 'minitest/autorun'
+require 'test/unit'
 require 'to_source'
 
 module ToSource
-  class VisitorTest < MiniTest::Unit::TestCase
+  class VisitorTest < Test::Unit::TestCase
     def visit(code)
       code.to_ast.to_source
     end

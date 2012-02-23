@@ -35,11 +35,11 @@ module ToSource
     end
 
     def string_literal(node, parent)
-      emit ?" << node.string.to_s << ?"
+      emit '"' << node.string.to_s << '"'
     end
 
     def symbol_literal(node, parent)
-      emit ?: << node.value.to_s
+      emit ':' << node.value.to_s
     end
 
     def true_literal(node, parent)
@@ -88,15 +88,15 @@ module ToSource
     end
 
     def regex_literal(node, parent)
-      emit ?/
+      emit '/'
       emit node.source
-      emit ?/
+      emit '/'
     end
 
     def send(node, parent)
       unless node.receiver.is_a?(Rubinius::AST::Self)
         node.receiver.lazy_visit self, node
-        emit ?.
+        emit '.'
       end
       emit node.name
 
@@ -111,13 +111,13 @@ module ToSource
 
       unless node.receiver.is_a?(Rubinius::AST::Self)
         node.receiver.lazy_visit self, node
-        emit ?.
+        emit '.'
       end
 
       emit node.name
-      emit ?(
+      emit '('
       node.arguments.lazy_visit self, node
-      emit ?)
+      emit ')'
       if node.block
         emit ' '
         node.block.lazy_visit self, node if node.block
@@ -139,12 +139,12 @@ module ToSource
         node.arguments.left.body.map(&:name)
       end
 
-      emit ?|
+      emit '|'
       body.each_with_index do |argument, index|
         emit argument.to_s
         emit ', ' unless body.length == index + 1 # last element
       end
-      emit ?|
+      emit '|'
     end
 
     def iter(node, parent)
@@ -179,7 +179,7 @@ module ToSource
     end
 
     def not(node, parent)
-      emit ?!
+      emit '!'
       node.value.lazy_visit self, parent
     end
 
