@@ -266,7 +266,40 @@ module ToSource
       emit 'end'
     end
 
-    def unless(node, parent)
+    def while(node, parent)
+      emit 'while '
+      node.condition.lazy_visit self, node
+      emit "\n"
+
+      @indentation += 1
+
+      if node.body.is_a?(Rubinius::AST::Block)
+        node.body.lazy_visit self, parent, true
+      else
+        emit current_indentation
+        node.body.lazy_visit self, parent
+      end
+
+      emit "\n"
+      emit "end"
+    end
+
+    def until(node, parent)
+      emit 'until '
+      node.condition.lazy_visit self, node
+      emit "\n"
+
+      @indentation += 1
+
+      if node.body.is_a?(Rubinius::AST::Block)
+        node.body.lazy_visit self, parent, true
+      else
+        emit current_indentation
+        node.body.lazy_visit self, parent
+      end
+
+      emit "\n"
+      emit "end"
     end
 
     private

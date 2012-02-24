@@ -146,5 +146,21 @@ module ToSource
     def test_unless
       assert_source "unless 3\n  9\nend"
     end
+
+    def test_while
+      assert_source "while false\n  3\nend"
+    end
+
+    def test_while_with_multiple_blocks
+      assert_source "while false\n  3\n  5\nend"
+    end
+
+    def test_until
+      assert_source "until false\n  3\nend"
+    end
+
+    def test_until_with_multiple_blocks
+      assert_source "while false\n  3\n  5\nend"
+    end
   end
 end
