@@ -126,5 +126,25 @@ module ToSource
       assert_source "!1"
       assert_source "!!1"
     end
+
+    def test_if
+      assert_source "if 3\n  9\nend"
+    end
+
+    def test_if_with_multiple_blocks
+      assert_source "if 3\n  9\n  8\nend"
+    end
+
+    def test_else
+      assert_source "if 3\n  9\nelse\n  9\nend"
+    end
+
+    def test_else_with_multiple_blocks
+      assert_source "if 3\n  9\n  8\nelse\n  9\n  8\nend"
+    end
+
+    def test_unless
+      assert_source "unless 3\n  9\nend"
+    end
   end
 end

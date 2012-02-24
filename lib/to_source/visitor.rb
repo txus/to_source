@@ -223,6 +223,52 @@ module ToSource
       emit node.name
     end
 
+    def if(node, parent)
+      body, else_body = node.body, node.else
+      keyword = 'if'
+
+      if node.body.is_a?(Rubinius::AST::NilLiteral) && !node.else.is_a?(Rubinius::AST::NilLiteral)
+
+        body, else_body = else_body, body
+        keyword = 'unless'
+      end
+
+      emit keyword << ' '
+      node.condition.lazy_visit self, node
+      emit "\n"
+
+      @indentation += 1
+
+      if body.is_a?(Rubinius::AST::Block)
+        body.lazy_visit self, parent, true
+      else
+        emit current_indentation
+        body.lazy_visit self, parent
+      end
+
+      emit "\n"
+
+      if else_body.is_a?(Rubinius::AST::NilLiteral)
+        emit 'end'
+        return
+      end
+
+      emit "else\n"
+
+      if else_body.is_a?(Rubinius::AST::Block)
+        else_body.lazy_visit self, parent, true
+      else
+        emit current_indentation
+        else_body.lazy_visit self, parent
+      end
+
+      emit "\n"
+      emit 'end'
+    end
+
+    def unless(node, parent)
+    end
+
     private
 
     def process_binary_operator(node, parent)
