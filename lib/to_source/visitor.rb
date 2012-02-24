@@ -302,6 +302,11 @@ module ToSource
       emit "end"
     end
 
+    def return(node, parent)
+      emit 'return '
+      node.value.lazy_visit self, parent
+    end
+
     private
 
     def process_binary_operator(node, parent)

@@ -162,5 +162,9 @@ module ToSource
     def test_until_with_multiple_blocks
       assert_source "while false\n  3\n  5\nend"
     end
+
+    def test_return
+      assert_source "return 9"
+    end
   end
 end
