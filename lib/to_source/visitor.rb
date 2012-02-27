@@ -26,6 +26,15 @@ module ToSource
       emit node.name
     end
 
+    def instance_variable_assignment(node, parent)
+      emit "%s = " % node.name
+      node.value.lazy_visit self, node
+    end
+
+    def instance_variable_access(node, parent)
+      emit node.name
+    end
+
     def fixnum_literal(node, parent)
       emit node.value.to_s
     end

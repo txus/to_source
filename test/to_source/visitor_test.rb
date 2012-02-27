@@ -19,8 +19,16 @@ module ToSource
       assert_source "foo = 1"
     end
 
+    def test_ivar_assignment
+      assert_source "@foo = 1"
+    end
+
     def test_local_access
       assert_source "foo = 1\nfoo"
+    end
+
+    def test_ivar_access
+      assert_source "@foo"
     end
 
     def test_constant_access
