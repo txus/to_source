@@ -222,6 +222,11 @@ module ToSource
       node.right.lazy_visit self, node
     end
 
+    def toplevel_constant(node, parent)
+      emit "::"
+      emit node.name
+    end
+
     def constant_access(node, parent)
       emit node.name
     end

@@ -31,6 +31,10 @@ module ToSource
       assert_source "@foo"
     end
 
+    def test_toplevel_constant_access
+      assert_source "::Rubinius"
+    end
+
     def test_constant_access
       assert_source "Rubinius"
     end
