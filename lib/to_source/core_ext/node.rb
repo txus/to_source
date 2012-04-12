@@ -9,8 +9,11 @@ module Rubinius
       #
       # Returns nothing.
       def lazy_visit(visitor, parent=nil, indent=false)
-        args = [self.node_name, self, parent]
-        args.push true if indent
+        name = node_name
+        name = "#{name}_def" if %w[ class module ].include?(name)
+
+        args = [name, self, parent]
+        args << true if indent
 
         visitor.__send__ *args
       end
