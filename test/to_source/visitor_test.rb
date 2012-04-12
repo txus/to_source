@@ -15,6 +15,26 @@ module ToSource
       assert_equal expected, visit(code)
     end
 
+    def test_class
+      assert_source "class TestClass\nend"
+    end
+
+    def test_class_with_superclass
+      assert_source "class TestClass < Object\nend"
+    end
+
+    def test_class_with_body
+      assert_source "class TestClass\n  1\nend"
+    end
+
+    def test_module
+      assert_source "module TestModule\nend"
+    end
+
+    def test_module_with_body
+      assert_source "module TestModule\n  1\nend"
+    end
+
     def test_local_assignment
       assert_source "foo = 1"
     end

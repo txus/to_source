@@ -17,6 +17,42 @@ module ToSource
       '  ' * @indentation
     end
 
+    def class_def(node, parent)
+      emit "class %s" % node.name.name
+
+      superclass = node.superclass
+      unless superclass.is_a?(Rubinius::AST::NilLiteral)
+        emit " < %s" % superclass.name
+      end
+
+      node.body.lazy_visit self, node, true
+
+      emit "\n"
+      emit "end"
+    end
+
+    def module_def(node, parent)
+      emit "module %s" % node.name.name
+
+      node.body.lazy_visit self, node, true
+
+      emit "\n"
+      emit "end"
+    end
+
+    def empty_body(*)
+      # do nothing
+    end
+
+    def class_scope(node, parent, indent)
+      emit "\n"
+      @indentation += 1 if indent
+      node.body.lazy_visit self, node, indent
+    ensure
+      @indentation -= 1 if indent
+    end
+    alias module_scope class_scope
+
     def local_variable_assignment(node, parent)
       emit "%s = " % node.name
       node.value.lazy_visit self, node
