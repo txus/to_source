@@ -203,7 +203,7 @@ module ToSource
       assert_source "self.foo"
     end
 
-    def test_implictly_send_to_self
+    def test_implicitly_send_to_self
       assert_source "foo"
     end
   end
