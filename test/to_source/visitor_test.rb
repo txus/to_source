@@ -198,5 +198,13 @@ module ToSource
     def test_return
       assert_source "return 9"
     end
+
+    def test_explicitly_send_to_self
+      assert_source "self.foo"
+    end
+
+    def test_implictly_send_to_self
+      assert_source "foo"
+    end
   end
 end
