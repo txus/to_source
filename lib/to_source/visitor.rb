@@ -145,7 +145,7 @@ module ToSource
     end
 
     def send(node, parent)
-      unless node.receiver.is_a?(Rubinius::AST::Self)
+      unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
         node.receiver.lazy_visit self, node
         emit '.'
       end
@@ -155,6 +155,10 @@ module ToSource
         emit ' '
         node.block.lazy_visit self, node if node.block
       end
+    end
+
+    def self(node, parent)
+      emit 'self'
     end
 
     def send_with_arguments(node, parent)
