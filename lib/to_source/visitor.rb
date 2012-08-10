@@ -411,6 +411,24 @@ module ToSource
       emit "end"
     end
 
+    def define_singleton(node, parent)
+      emit 'def '
+      node.receiver.lazy_visit self, parent
+      emit '.'
+      node.body.lazy_visit self, parent
+    end
+
+    def define_singleton_scope(node, parent)
+      emit node.name
+      node.arguments.lazy_visit self, parent
+      emit "\n"
+      
+      @indentation +=1
+      node.body.lazy_visit self, parent, true
+      emit "\n"
+      emit "end"
+    end
+
     def return(node, parent)
       emit 'return '
       node.value.lazy_visit self, parent

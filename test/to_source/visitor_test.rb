@@ -250,5 +250,13 @@ module ToSource
     def test_define_with_formal_and_block_argument
       assert_source "def foor(bar, &block)\n  bar\nend"
     end
+
+    def test_define_signleton_on_self
+      assert_source "def self.foo\n  bar\nend"
+    end
+
+    def test_define_signleton_on_constant
+      assert_source "def Foo.bar\n  bar\nend"
+    end
   end
 end
