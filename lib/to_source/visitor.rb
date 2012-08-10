@@ -356,6 +356,61 @@ module ToSource
       emit "end"
     end
 
+    def formal_arguments(node, parent)
+      return if node.names.empty? 
+
+      required, defaults, splat = node.required, node.defaults, node.splat
+
+      emit "("
+      emit required.join(", ")
+
+      empty = required.empty?
+
+      if defaults
+        emit ", " unless empty
+        node.defaults.lazy_visit self, parent
+      end
+
+      if node.splat
+        emit ", " unless empty
+        emit "*"
+        emit node.splat
+      end
+
+      if node.block_arg
+        emit ", " unless empty
+
+        node.block_arg.lazy_visit self, parent
+      end
+
+      emit ")"
+    end
+
+    def block_argument(node, parent)
+      emit "&"
+      emit node.name
+    end
+
+    def default_arguments(node, parent)
+      last = node.arguments.length - 1
+      node.arguments.each_with_index do |argument, index|
+        argument.lazy_visit self, parent
+        emit ',' unless index == last
+      end
+    end
+
+    def define(node, parent)
+      emit 'def '
+      emit node.name
+      node.arguments.lazy_visit self, parent
+      emit "\n"
+      
+      @indentation +=1
+      node.body.lazy_visit self, parent, true
+      emit "\n"
+      emit "end"
+    end
+
     def return(node, parent)
       emit 'return '
       node.value.lazy_visit self, parent

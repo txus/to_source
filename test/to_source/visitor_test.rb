@@ -206,5 +206,49 @@ module ToSource
     def test_implicitly_send_to_self
       assert_source "foo"
     end
+
+    def test_define
+      assert_source "def foo\n  bar\nend"
+    end
+
+    def test_define_with_body
+      assert_source "def foo\n  bar\nend"
+    end
+
+    def test_define_with_argument
+      assert_source "def foo(bar)\n  bar\nend"
+    end
+
+    def test_define_with_arguments
+      assert_source "def foo(bar, baz)\n  bar\nend"
+    end
+
+    def test_define_with_optional_argument
+      assert_source "def foo(bar = true)\n  bar\nend"
+    end
+
+    def test_define_with_formal_and_optional_argument
+      assert_source "def foo(bar, baz = true)\n  bar\nend"
+    end
+
+    def test_define_with_splat_argument
+      assert_source "def foo(*bar)\n  bar\nend"
+    end
+
+    def test_define_with_formal_and_splat_argument
+      assert_source "def foo(bar, *baz)\n  bar\nend"
+    end
+
+    def test_define_with_formal_default_and_splat_argument
+      assert_source "def foo(bar, baz = true, *bor)\n  bar\nend"
+    end
+
+    def test_define_with_block_argument
+      assert_source "def foor(&block)\n  bar\nend"
+    end
+
+    def test_define_with_formal_and_block_argument
+      assert_source "def foor(bar, &block)\n  bar\nend"
+    end
   end
 end
