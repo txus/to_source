@@ -179,14 +179,21 @@ module ToSource
     end
 
     def send(node)
+      if node.name == :'!'
+        emit '!'
+        dispatch(node.receiver)
+        return
+      end
+
       unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
         dispatch(node.receiver)
         emit '.'
       end
-      emit node.name
 
-      if node.block
-        emit ' '
+      emit(node.name)
+
+      if(node.block)
+        emit(' ')
         dispatch(node.block)
       end
     end
@@ -200,16 +207,16 @@ module ToSource
 
       unless node.receiver.is_a?(Rubinius::AST::Self)
         dispatch(node.receiver)
-        emit '.'
+        emit('.')
       end
 
       emit(node.name)
 
-      emit '('
+      emit('(')
       dispatch(node.arguments)
-      emit ')'
+      emit(')')
       if node.block
-        emit ' '
+        emit(' ')
         dispatch(node.block) 
       end
     end
@@ -218,8 +225,23 @@ module ToSource
       body = node.array
       body.each_with_index do |argument, index|
         dispatch(argument)
-        emit ', ' unless body.length == index + 1 # last element
+        emit(', ') unless body.length == index + 1 # last element
       end
+    end
+
+    def iter(node)
+      emit('do')
+
+      arguments = node.arguments
+      unless arguments.names.empty?
+        emit(' ')
+        iter_arguments(node.arguments)
+      end
+
+      nl
+      body(node.body)
+
+      kend
     end
 
     def iter_arguments(node)
@@ -237,20 +259,21 @@ module ToSource
       emit '|'
     end
 
-    def iter(node)
-      emit 'do'
+    def iter19(node)
+      emit('do')
 
-      if node.arguments && node.arguments.arity != -1
-        emit ' '
-        dispatch(node.arguments)
+      arguments = node.arguments
+      unless arguments.names.empty?
+        emit(' ')
+        formal_arguments_generic(node.arguments,'|','|')
       end
 
       nl
-
       body(node.body)
 
       kend
     end
+
 
     def block(node)
       body = node.array
@@ -262,33 +285,34 @@ module ToSource
     end
 
     def not(node)
-      emit '!'
+      emit('!')
       dispatch(node.value)
     end
 
     def and(node)
       dispatch(node.left)
-      emit ' && '
+      emit(' && ')
       dispatch(node.right)
     end
 
     def or(node)
       dispatch(node.left)
-      emit ' || '
+      emit(' || ')
       dispatch(node.right)
     end
 
     def op_assign_and(node)
       dispatch(node.left)
-      emit ' && '
+      emit(' && ')
       dispatch(node.right)
     end
 
     def op_assign_or(node)
       dispatch(node.left)
-      emit ' || '
+      emit(' || ')
       dispatch(node.right)
     end
+    alias_method :op_assign_or19, :op_assign_or
 
     def toplevel_constant(node)
       emit('::')
@@ -302,7 +326,7 @@ module ToSource
     def scoped_constant(node)
       dispatch(node.parent)
       emit('::')
-      emit node.name
+      emit(node.name)
     end
     alias_method :scoped_class_name, :scoped_constant
     alias_method :scoped_module_name, :scoped_constant
@@ -373,11 +397,11 @@ module ToSource
       kend
     end
 
-    def formal_arguments(node)
+    def formal_arguments_generic(node,open,close)
       return if node.names.empty? 
       required, defaults, splat = node.required, node.defaults, node.splat
 
-      emit('(')
+      emit(open)
       emit(required.join(', '))
 
       empty = required.empty?
@@ -399,8 +423,14 @@ module ToSource
         dispatch(node.block_arg)
       end
 
-      emit(')')
+      emit(close)
     end
+
+    def formal_arguments(node)
+      formal_arguments_generic(node,'(',')')
+    end
+
+    alias_method :formal_arguments19, :formal_arguments
 
     def block_argument(node)
       emit('&')
