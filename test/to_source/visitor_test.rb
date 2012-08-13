@@ -3,36 +3,98 @@ require 'to_source'
 
 module ToSource
   class VisitorTest < Test::Unit::TestCase
+    def compress(code)
+      lines = code.split("\n")
+      match = /\A( *)/.match(lines.first)
+      whitespaces = match[1].to_s.length
+      stripped = lines.map do |line|
+        line[whitespaces..-1]
+      end
+      joined = stripped.join("\n")
+    end
+
     def visit(code)
       code.to_ast.to_source
     end
 
     def assert_source(code)
-      assert_equal code, visit(code)
+      assert_equal compress(code), visit(code)
     end
 
     def assert_converts(expected, code)
-      assert_equal expected, visit(code)
+      assert_equal compress(expected), visit(code)
     end
 
     def test_class
-      assert_source "class TestClass\nend"
+      assert_source <<-RUBY
+        class TestClass
+        end
+      RUBY
+    end
+
+    def test_scoped_class 
+      assert_source <<-RUBY
+        class SomeNameSpace::TestClass
+        end
+      RUBY
+    end
+
+    def test_deeply_scoped_class 
+      assert_source <<-RUBY
+        class Some::Name::Space::TestClass
+        end
+      RUBY
     end
 
     def test_class_with_superclass
-      assert_source "class TestClass < Object\nend"
+      assert_source <<-RUBY
+        class TestClass < Object
+        end
+      RUBY
+    end
+
+    def test_class_with_scoped_superclass
+      assert_source <<-RUBY
+        class TestClass < SomeNameSpace::Object
+        end
+      RUBY
     end
 
     def test_class_with_body
-      assert_source "class TestClass\n  1\nend"
+      assert_source <<-RUBY
+        class TestClass
+          1
+        end
+      RUBY
     end
 
     def test_module
-      assert_source "module TestModule\nend"
+      assert_source <<-RUBY 
+        module TestModule
+        end
+      RUBY
+    end
+
+    def test_scoped_module 
+      assert_source <<-RUBY
+        module SomeNameSpace::TestModule
+        end
+      RUBY
+    end
+
+    def test_deeply_scoped_module 
+      assert_source <<-RUBY
+        module Some::Name::Space::TestModule
+        end
+      RUBY
     end
 
     def test_module_with_body
-      assert_source "module TestModule\n  1\nend"
+      assert_source <<-RUBY 
+        module TestModule
+          1
+        end
+      RUBY
     end
 
     def test_local_assignment
@@ -44,7 +106,10 @@ module ToSource
     end
 
     def test_local_access
-      assert_source "foo = 1\nfoo"
+      assert_source <<-RUBY
+        foo = 1
+        foo
+      RUBY
     end
 
     def test_ivar_access
@@ -120,23 +185,48 @@ module ToSource
     end
 
     def test_send_with_arguments_and_empty_block
-      assert_converts "foo.bar(:baz, :yeah) do\n  nil\nend", "foo.bar(:baz, :yeah) do\nend"
+      assert_converts <<-RUBY, <<-CONVERTED
+        foo.bar(:baz, :yeah) do
+          nil
+        end
+      RUBY
+        foo.bar(:baz, :yeah) do
+        end
+      CONVERTED
     end
 
     def test_send_with_arguments_and_block_with_one_argument
-      assert_source "foo.bar(:baz, :yeah) do |a|\n  3\n  4\nend"
+      assert_source <<-RUBY 
+        foo.bar(:baz, :yeah) do |a|
+          3
+          4
+        end
+      RUBY
     end
 
     def test_send_with_arguments_and_block_with_arguments
-      assert_source "foo.bar(:baz, :yeah) do |a, b|\n  3\n  4\nend"
+      assert_source <<-RUBY
+        foo.bar(:baz, :yeah) do |a, b|
+          3
+          4
+        end
+      RUBY
     end
 
     def test_lambda
-      assert_source "lambda do |a, b|\n  a\nend"
+      assert_source <<-RUBY
+        lambda do |a, b|
+          a
+        end
+      RUBY
     end
 
     def test_proc
-      assert_source "Proc.new do\n  a\nend"
+      assert_source <<-RUBY
+        Proc.new do
+          a
+        end
+      RUBY
     end
 
     def test_binary_operators
@@ -160,39 +250,84 @@ module ToSource
     end
 
     def test_if
-      assert_source "if 3\n  9\nend"
+      assert_source <<-RUBY
+        if 3
+          9
+        end
+      RUBY
     end
 
     def test_if_with_multiple_blocks
-      assert_source "if 3\n  9\n  8\nend"
+      assert_source <<-RUBY
+        if 3
+          9
+          8
+        end
+      RUBY
     end
 
     def test_else
-      assert_source "if 3\n  9\nelse\n  9\nend"
+      assert_source <<-RUBY
+        if 3
+          9
+        else
+          9
+        end
+      RUBY
     end
 
     def test_else_with_multiple_blocks
-      assert_source "if 3\n  9\n  8\nelse\n  9\n  8\nend"
+      assert_source <<-RUBY
+        if 3
+          9
+          8
+        else
+          7
+          10
+        end
+      RUBY
     end
 
     def test_unless
-      assert_source "unless 3\n  9\nend"
+      assert_source <<-RUBY
+        unless 3
+          9
+        end
+      RUBY
     end
 
     def test_while
-      assert_source "while false\n  3\nend"
+      assert_source <<-RUBY
+        while false
+          3
+        end
+      RUBY
     end
 
     def test_while_with_multiple_blocks
-      assert_source "while false\n  3\n  5\nend"
+      assert_source <<-RUBY
+        while false
+          3
+          5
+        end
+      RUBY
     end
 
     def test_until
-      assert_source "until false\n  3\nend"
+      assert_source <<-RUBY
+        until false
+          3
+        end
+      RUBY
     end
 
     def test_until_with_multiple_blocks
-      assert_source "while false\n  3\n  5\nend"
+      assert_source <<-RUBY 
+        while false
+          3
+          5
+        end
+      RUBY
     end
 
     def test_return
@@ -208,55 +343,133 @@ module ToSource
     end
 
     def test_define
-      assert_source "def foo\n  bar\nend"
+      assert_source <<-RUBY
+        def foo
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_body
-      assert_source "def foo\n  bar\nend"
+      assert_source <<-RUBY
+        def foo
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_argument
-      assert_source "def foo(bar)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_arguments
-      assert_source "def foo(bar, baz)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar, baz)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_optional_argument
-      assert_source "def foo(bar = true)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar = true)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_formal_and_optional_argument
-      assert_source "def foo(bar, baz = true)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar, baz = true)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_splat_argument
-      assert_source "def foo(*bar)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(*bar)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_formal_and_splat_argument
-      assert_source "def foo(bar, *baz)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar, *baz)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_formal_default_and_splat_argument
-      assert_source "def foo(bar, baz = true, *bor)\n  bar\nend"
+      assert_source <<-RUBY
+        def foo(bar, baz = true, *bor)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_block_argument
-      assert_source "def foor(&block)\n  bar\nend"
+      assert_source <<-RUBY
+        def foor(&block)
+          bar
+        end
+      RUBY
     end
 
     def test_define_with_formal_and_block_argument
-      assert_source "def foor(bar, &block)\n  bar\nend"
+      assert_source <<-RUBY
+        def foor(bar, &block)
+          bar
+        end
+      RUBY
     end
 
     def test_define_signleton_on_self
-      assert_source "def self.foo\n  bar\nend"
+      assert_source <<-RUBY
+        def self.foo
+          bar
+        end
+      RUBY
     end
 
     def test_define_signleton_on_constant
-      assert_source "def Foo.bar\n  bar\nend"
+      assert_source <<-RUBY
+        def Foo.bar
+          bar
+        end
+      RUBY
+    end
+
+    def test_define_indentation
+      assert_source <<-RUBY
+        class Foo
+          def bar
+            nil
+          end
+        end
+      RUBY
+    end
+
+    def test_class_identation
+      assert_source <<-RUBY
+        module Foo
+          class X
+            def bar
+              x = 1
+              z.each do |y|
+                foo
+                @bar = z
+              end
+            end
+          end
+        end
+      RUBY
     end
   end
 end
