@@ -136,6 +136,10 @@ module ToSource
       assert_source "1.0"
     end
 
+    def test_negated_numeric_literal
+      assert_source "-1"
+    end
+
     def test_string_literal
       assert_source '"foo"'
     end

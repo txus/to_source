@@ -40,6 +40,11 @@ module ToSource
       emit("\n")
     end
 
+    def negate(node)
+      emit('-')
+      dispatch(node.value)
+    end
+
     def class_def(node)
       emit('class ')
 
