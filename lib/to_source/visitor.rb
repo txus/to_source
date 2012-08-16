@@ -5,189 +5,251 @@ module ToSource
       @indentation = 0
     end
 
-    def emit(code)
-      @output.push code
+    def self.run(node)
+      visitor = new
+      visitor.dispatch(node)
+      visitor.output
+    end
+
+    def dispatch(node)
+      name = node.node_name
+      name = "#{name}_def" if %w[ class module ].include?(name)
+      __send__(name, node)
     end
 
     def output
       @output.join
     end
 
+  private
+
+    def kend
+      emit(current_indentation)
+      emit('end')
+    end
+
+    def emit(code)
+      @output << code
+    end
+
     def current_indentation
       '  ' * @indentation
     end
 
-    def class_def(node, parent)
-      emit "class %s" % node.name.name
+    def nl
+      emit("\n")
+    end
+
+    def negate(node)
+      emit('-')
+      dispatch(node.value)
+    end
+
+    def class_def(node)
+      emit('class ')
+
+      dispatch(node.name)
 
       superclass = node.superclass
       unless superclass.is_a?(Rubinius::AST::NilLiteral)
-        emit " < %s" % superclass.name
+        emit ' < '
+        dispatch(superclass)
       end
+      nl
 
-      node.body.lazy_visit self, node, true
+      dispatch(node.body)
 
-      emit "\n"
-      emit "end"
+      kend
     end
 
-    def module_def(node, parent)
-      emit "module %s" % node.name.name
+    def class_name(node)
+      emit(node.name)
+    end
 
-      node.body.lazy_visit self, node, true
+    def module_name(node)
+      emit(node.name)
+    end
 
-      emit "\n"
-      emit "end"
+    def module_def(node)
+      emit "module "
+      dispatch(node.name)
+      nl
+
+      dispatch(node.body)
+
+      kend
     end
 
     def empty_body(*)
       # do nothing
     end
 
-    def class_scope(node, parent, indent)
-      emit "\n"
-      @indentation += 1 if indent
-      node.body.lazy_visit self, node, indent
-    ensure
-      @indentation -= 1 if indent
+    def class_scope(node)
+      body(node.body)
     end
-    alias module_scope class_scope
 
-    def local_variable_assignment(node, parent)
+    def module_scope(node)
+      body(node.body)
+    end
+
+    def local_variable_assignment(node)
       emit "%s = " % node.name
-      node.value.lazy_visit self, node
+      dispatch(node.value)
     end
 
-    def local_variable_access(node, parent)
-      emit node.name
+    def local_variable_access(node)
+      emit(node.name)
     end
 
-    def instance_variable_assignment(node, parent)
-      emit "%s = " % node.name
-      node.value.lazy_visit self, node
+    def instance_variable_assignment(node)
+      emit("%s = " % node.name)
+      dispatch(node.value)
     end
 
-    def instance_variable_access(node, parent)
-      emit node.name
+    def instance_variable_access(node)
+      emit(node.name)
     end
 
-    def fixnum_literal(node, parent)
-      emit node.value.to_s
+    def fixnum_literal(node)
+      emit(node.value.to_s)
     end
 
-    def float_literal(node, parent)
-      emit node.value.to_s
+    def float_literal(node)
+      emit(node.value.to_s)
     end
 
-    def string_literal(node, parent)
-      emit '"' << node.string.to_s << '"'
+    def string_literal(node)
+      emit(node.string.inspect)
     end
 
-    def symbol_literal(node, parent)
+    def symbol_literal(node)
       emit ':' << node.value.to_s
     end
 
-    def true_literal(node, parent)
+    def true_literal(node)
       emit 'true'
     end
 
-    def false_literal(node, parent)
+    def false_literal(node)
       emit 'false'
     end
 
-    def nil_literal(node, parent)
+    def nil_literal(node)
       emit 'nil'
     end
 
-    def array_literal(node, parent)
+    def array_literal(node)
       body = node.body
 
       emit '['
       body.each_with_index do |node, index|
-        node.lazy_visit self, node
+        dispatch(node)
         emit ', ' unless body.length == index + 1 # last element
       end
       emit ']'
     end
 
-    def hash_literal(node, parent)
+    def hash_literal(node)
       body = node.array.each_slice(2)
 
       emit '{'
       body.each_with_index do |slice, index|
         key, value = slice
 
-        key.lazy_visit self, node
+        dispatch(key)
         emit " => "
-        value.lazy_visit self, node
+        dispatch(value)
 
         emit ', ' unless body.to_a.length == index + 1 # last element
       end
       emit '}'
     end
 
-    def range(node, parent)
-      node.start.lazy_visit self, node
+    def range(node)
+      dispatch(node.start)
       emit '..'
-      node.finish.lazy_visit self, node
+      dispatch(node.finish)
     end
 
-    def range_exclude(node, parent)
-      node.start.lazy_visit self, node
+    def range_exclude(node)
+      dispatch(node.start)
       emit '...'
-      node.finish.lazy_visit self, node
+      dispatch(node.finish)
     end
 
-    def regex_literal(node, parent)
+    def regex_literal(node)
       emit '/'
       emit node.source
       emit '/'
     end
 
-    def send(node, parent)
+    def send(node)
+      if node.name == :'!'
+        emit '!'
+        dispatch(node.receiver)
+        return
+      end
+
       unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
-        node.receiver.lazy_visit self, node
+        dispatch(node.receiver)
         emit '.'
       end
-      emit node.name
 
-      if node.block
-        emit ' '
-        node.block.lazy_visit self, node if node.block
+      emit(node.name)
+
+      if(node.block)
+        emit(' ')
+        dispatch(node.block)
       end
     end
 
-    def self(node, parent)
+    def self(node)
       emit 'self'
     end
 
-    def send_with_arguments(node, parent)
-      return if process_binary_operator(node, parent) # 1 * 2, a / 3, true && false
+    def send_with_arguments(node)
+      return if process_binary_operator(node) # 1 * 2, a / 3, true && false
 
       unless node.receiver.is_a?(Rubinius::AST::Self)
-        node.receiver.lazy_visit self, node
-        emit '.'
+        dispatch(node.receiver)
+        emit('.')
       end
 
-      emit node.name
-      emit '('
-      node.arguments.lazy_visit self, node
-      emit ')'
+      emit(node.name)
+
+      emit('(')
+      dispatch(node.arguments)
+      emit(')')
       if node.block
-        emit ' '
-        node.block.lazy_visit self, node if node.block
+        emit(' ')
+        dispatch(node.block) 
       end
     end
 
-    def actual_arguments(node, parent)
+    def actual_arguments(node)
       body = node.array
       body.each_with_index do |argument, index|
-        argument.lazy_visit self, parent
-        emit ', ' unless body.length == index + 1 # last element
+        dispatch(argument)
+        emit(', ') unless body.length == index + 1 # last element
       end
     end
 
-    def iter_arguments(node, parent)
+    def iter(node)
+      emit('do')
+
+      arguments = node.arguments
+      unless arguments.names.empty?
+        emit(' ')
+        iter_arguments(node.arguments)
+      end
+
+      nl
+      body(node.body)
+
+      kend
+    end
+
+    def iter_arguments(node)
       body = if node.prelude == :single
         Array(node.arguments.name)
       else
@@ -202,168 +264,227 @@ module ToSource
       emit '|'
     end
 
-    def iter(node, parent)
-      emit 'do'
+    def iter19(node)
+      emit('do')
 
-      if node.arguments && node.arguments.arity != -1
-        emit ' '
-        node.arguments.lazy_visit self, parent
+      arguments = node.arguments
+      unless arguments.names.empty?
+        emit(' ')
+        formal_arguments_generic(node.arguments,'|','|')
       end
 
-      emit "\n"
-      @indentation += 1
+      nl
+      body(node.body)
 
-      if node.body.is_a?(Rubinius::AST::Block)
-        node.body.lazy_visit self, parent, true
-      else
-        emit current_indentation
-        node.body.lazy_visit self, parent
-      end
-
-      emit "\n"
-      emit 'end'
+      kend
     end
 
-    def block(node, parent, indent=false)
+
+    def block(node)
       body = node.array
-      body.each_with_index do |expression, index|
-        emit current_indentation if indent
-        expression.lazy_visit self, parent
-        emit "\n" unless body.length == index + 1 # last element
+      body.each_with_index do |expression,index|
+        emit(current_indentation)
+        dispatch(expression)
+        nl unless body.length == index+1
       end
     end
 
-    def not(node, parent)
-      emit '!'
-      node.value.lazy_visit self, parent
+    def not(node)
+      emit('!')
+      dispatch(node.value)
     end
 
-    def and(node, parent)
-      node.left.lazy_visit self, node
-      emit ' && '
-      node.right.lazy_visit self, node
+    def and(node)
+      dispatch(node.left)
+      emit(' && ')
+      dispatch(node.right)
     end
 
-    def or(node, parent)
-      node.left.lazy_visit self, node
-      emit ' || '
-      node.right.lazy_visit self, node
+    def or(node)
+      dispatch(node.left)
+      emit(' || ')
+      dispatch(node.right)
     end
 
-    def op_assign_and(node, parent)
-      node.left.lazy_visit self, node
-      emit ' && '
-      node.right.lazy_visit self, node
+    def op_assign_and(node)
+      dispatch(node.left)
+      emit(' && ')
+      dispatch(node.right)
     end
 
-    def op_assign_or(node, parent)
-      node.left.lazy_visit self, node
-      emit ' || '
-      node.right.lazy_visit self, node
+    def op_assign_or(node)
+      dispatch(node.left)
+      emit(' || ')
+      dispatch(node.right)
+    end
+    alias_method :op_assign_or19, :op_assign_or
+
+    def toplevel_constant(node)
+      emit('::')
+      emit(node.name)
     end
 
-    def toplevel_constant(node, parent)
-      emit "::"
-      emit node.name
+    def constant_access(node)
+      emit(node.name)
     end
 
-    def constant_access(node, parent)
-      emit node.name
+    def scoped_constant(node)
+      dispatch(node.parent)
+      emit('::')
+      emit(node.name)
     end
+    alias_method :scoped_class_name, :scoped_constant
+    alias_method :scoped_module_name, :scoped_constant
 
-    def scoped_constant(node, parent)
-      node.parent.lazy_visit self, node
-      emit '::'
-      emit node.name
-    end
-
-    def if(node, parent)
+    def if(node)
       body, else_body = node.body, node.else
+
       keyword = 'if'
 
       if node.body.is_a?(Rubinius::AST::NilLiteral) && !node.else.is_a?(Rubinius::AST::NilLiteral)
-
         body, else_body = else_body, body
         keyword = 'unless'
       end
 
-      emit keyword << ' '
-      node.condition.lazy_visit self, node
-      emit "\n"
+      emit(keyword)
+      emit(' ')
+      dispatch(node.condition)
+      nl
 
-      @indentation += 1
-
-      if body.is_a?(Rubinius::AST::Block)
-        body.lazy_visit self, parent, true
-      else
-        emit current_indentation
-        body.lazy_visit self, parent
-      end
-
-      emit "\n"
+      body(body)
 
       if else_body.is_a?(Rubinius::AST::NilLiteral)
-        emit 'end'
+        kend
         return
       end
 
-      emit "else\n"
+      emit('else')
+      nl
 
-      if else_body.is_a?(Rubinius::AST::Block)
-        else_body.lazy_visit self, parent, true
-      else
-        emit current_indentation
-        else_body.lazy_visit self, parent
-      end
+      body(else_body)
 
-      emit "\n"
-      emit 'end'
+      kend
     end
 
-    def while(node, parent)
+    def body(node)
+      @indentation+=1
+      node = 
+        case node
+        when Rubinius::AST::Block, Rubinius::AST::EmptyBody
+          node
+        else
+          Rubinius::AST::Block.new(node.line, [node])
+        end
+
+      dispatch(node)
+      nl
+    ensure
+      @indentation-=1
+    end
+
+    def while(node)
       emit 'while '
-      node.condition.lazy_visit self, node
-      emit "\n"
+      dispatch(node.condition)
+      nl
 
-      @indentation += 1
+      body(node.body)
 
-      if node.body.is_a?(Rubinius::AST::Block)
-        node.body.lazy_visit self, parent, true
-      else
-        emit current_indentation
-        node.body.lazy_visit self, parent
-      end
-
-      emit "\n"
-      emit "end"
+      kend
     end
 
-    def until(node, parent)
+    def until(node)
       emit 'until '
-      node.condition.lazy_visit self, node
-      emit "\n"
+      dispatch(node.condition)
+      nl
 
-      @indentation += 1
+      body(node.body)
 
-      if node.body.is_a?(Rubinius::AST::Block)
-        node.body.lazy_visit self, parent, true
-      else
-        emit current_indentation
-        node.body.lazy_visit self, parent
+      kend
+    end
+
+    def formal_arguments_generic(node,open,close)
+      return if node.names.empty? 
+      required, defaults, splat = node.required, node.defaults, node.splat
+
+      emit(open)
+      emit(required.join(', '))
+
+      empty = required.empty?
+
+      if defaults
+        emit(', ') unless empty
+        dispatch(node.defaults)
       end
 
-      emit "\n"
-      emit "end"
+      if node.splat
+        emit(', ') unless empty
+        emit('*')
+        emit(node.splat)
+      end
+
+      if node.block_arg
+        emit(', ') unless empty
+
+        dispatch(node.block_arg)
+      end
+
+      emit(close)
     end
 
-    def return(node, parent)
+    def formal_arguments(node)
+      formal_arguments_generic(node,'(',')')
+    end
+
+    alias_method :formal_arguments19, :formal_arguments
+
+    def block_argument(node)
+      emit('&')
+      emit(node.name)
+    end
+
+    def default_arguments(node)
+      last = node.arguments.length - 1
+      node.arguments.each_with_index do |argument, index|
+        dispatch(argument)
+        emit(',') unless index == last
+      end
+    end
+
+    def define(node)
+      emit('def ')
+
+      emit(node.name)
+      dispatch(node.arguments)
+      nl
+
+      body(node.body)
+      kend
+    end
+
+    def define_singleton(node)
+      emit('def ')
+      dispatch(node.receiver)
+      emit('.')
+      dispatch(node.body)
+    end
+
+    def define_singleton_scope(node)
+      emit(node.name)
+      dispatch(node.arguments)
+      nl
+      
+      body(node.body)
+
+      kend
+    end
+
+    def return(node)
       emit 'return '
-      node.value.lazy_visit self, parent
+      dispatch(node.value)
     end
 
-    private
 
-    def process_binary_operator(node, parent)
+    def process_binary_operator(node)
       operators = %w(+ - * / & | <<).map(&:to_sym)
       return false unless operators.include?(node.name)
       return false if node.arguments.array.length != 1
@@ -371,11 +492,11 @@ module ToSource
       operand = node.arguments.array[0]
 
       unless node.receiver.is_a?(Rubinius::AST::Self)
-        node.receiver.lazy_visit self, node
+        dispatch(node.receiver)
       end
 
-      emit ' ' << node.name.to_s << ' '
-      operand.lazy_visit self, node
+      emit(" #{node.name.to_s} ")
+      dispatch(operand)
     end
   end
 end
