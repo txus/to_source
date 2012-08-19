@@ -128,6 +128,10 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'element assignment' do
+    assert_source 'array[index] = value'
+  end
+
   context 'multiple assignment' do
     context 'to local variable' do
       assert_source 'a, b = 1, 2'
