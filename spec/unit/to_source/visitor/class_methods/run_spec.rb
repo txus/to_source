@@ -546,6 +546,16 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'ensure' do
+    assert_source <<-RUBY
+      def foo
+        bar
+      ensure
+        baz
+      end
+    RUBY
+  end
+
   context 'return' do
     context 'with expression' do
       assert_source 'return 9'

@@ -54,9 +54,6 @@ module ToSource
       name = node.node_name
       name = "#{name}_def" if %w[ class module ].include?(name)
       __send__(name, node)
-    rescue NoMethodError
-      node.ascii_graph
-      raise
     end
 
     # Emit element assignment
@@ -74,6 +71,22 @@ module ToSource
       dispatch(index)
       emit('] = ')
       dispatch(value)
+    end
+
+
+    # Emit ensure
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def ensure(node)
+      body(node.body)
+      emit('ensure')
+      nl
+      body(node.ensure)
     end
 
     # Emit attribute assignment
@@ -104,16 +117,24 @@ module ToSource
       @indentation+=1
       node = 
         case node
-        when Rubinius::AST::Block, Rubinius::AST::EmptyBody
+        when Rubinius::AST::EmptyBody
           node
+        when Rubinius::AST::Block
+          # Hack to correctly indent ensure
+          if node.array.one? && node.array.first.kind_of?(Rubinius::AST::Ensure)
+            @indentation-=1
+            dispatch(node)
+            return
+          else
+            node
+          end
         else
           Rubinius::AST::Block.new(node.line, [node])
         end
 
       dispatch(node)
       nl
-    ensure
-      @indentation-=1
+      @indentation-=1 
     end
 
     # Emit end keyword
