@@ -123,6 +123,30 @@ module ToSource
       '  ' * @indentation
     end
 
+    # Emit dynamic string
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def dynamic_string(node)
+      emit('"')
+      emit(node.string.inspect[1..-2])
+      node.array.each do |member|
+        case member
+        when Rubinius::AST::ToString
+          emit('#{')
+          dispatch(member.value)
+          emit('}')
+        when Rubinius::AST::StringLiteral
+          emit(member.string.inspect[1..-2])
+        end
+      end
+      emit('"')
+    end
+
     # Emit to array
     #
     # @param [Rubinius::AST::Node] node
