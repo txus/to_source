@@ -608,6 +608,23 @@ module ToSource
       end
     end
 
+    # Emit yield
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def yield(node)
+      emit('yield')
+      arguments = node.arguments
+      unless arguments.array.empty?
+        emit(' ')
+        actual_arguments(arguments)
+      end
+    end
+
     # Emit acutal arguments
     #
     # @param [Rubinius::AST::Node] node

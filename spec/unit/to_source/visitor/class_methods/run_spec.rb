@@ -275,6 +275,19 @@ describe ToSource::Visitor,'.run' do
     RUBY
   end
 
+  context 'yield' do
+    context 'without arguments' do
+      assert_source 'yield'
+    end
+
+    context 'with argument' do
+      assert_source 'yield a'
+    end
+
+    context 'with arguments' do
+      assert_source 'yield a, b'
+    end
+  end
 
   context 'binary operators' do
     %w(+ - * / & | && || <<).each do |operator|
