@@ -229,6 +229,16 @@ describe ToSource::Visitor,'.run' do
         assert_source '"fo\no#{bar}b\naz"'
       end
     end
+
+    context 'dynamic regexp' do
+      context 'simple' do
+        assert_source '/foo#{bar}baz/'
+      end
+
+      context 'with escapes' do
+        assert_source '/fo\no#{bar}b\naz/'
+      end
+    end
   end
 
   context 'send' do

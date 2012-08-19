@@ -123,6 +123,39 @@ module ToSource
       '  ' * @indentation
     end
 
+    # Emit dynamic literal
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def dynamic_body(node)
+    end
+
+    # Emit dynamic regexp
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def dynamic_regex(node)
+      emit('/')
+      emit(node.string)
+      node.array.each do |member|
+        case member
+        when Rubinius::AST::ToString
+          emit('#{')
+          dispatch(member.value)
+          emit('}')
+        when Rubinius::AST::StringLiteral
+          emit(member.string)
+        end
+      end
+      emit('/')
+    end
+
     # Emit dynamic string
     #
     # @param [Rubinius::AST::Node] node
