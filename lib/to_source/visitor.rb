@@ -553,6 +553,19 @@ module ToSource
       emit(']')
     end
 
+
+    # Emit emtpy array literal
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def empty_array(node)
+      emit('[]')
+    end
+
     # Emit hash literal
     #
     # @param [Rubinius::AST::Node] node

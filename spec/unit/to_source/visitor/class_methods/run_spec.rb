@@ -204,8 +204,16 @@ describe ToSource::Visitor,'.run' do
       assert_source 'nil'
     end
 
+    context 'empty array' do
+      assert_source '[]'
+    end
+
     context 'array' do
       assert_source '[1, 2, 3]'
+    end
+
+    context 'empty hash' do
+      assert_source '{}'
     end
 
     context 'hash' do
