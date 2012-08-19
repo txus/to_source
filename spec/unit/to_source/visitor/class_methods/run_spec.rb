@@ -249,7 +249,6 @@ describe ToSource::Visitor,'.run' do
       end
     end
 
-
     context 'with block that takes arguments' do
       assert_source <<-RUBY 
         foo.bar do |a|
@@ -259,8 +258,12 @@ describe ToSource::Visitor,'.run' do
       RUBY
     end
 
-    pending 'with passing block argument' do
+    context 'with passing block argument' do
       assert_source 'foo.bar(&baz)'
+    end
+
+    context 'with formal and  block argument' do
+      assert_source 'foo.bar(:baz, &baz)'
     end
   end
 

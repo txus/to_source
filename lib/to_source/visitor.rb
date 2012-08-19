@@ -532,21 +532,28 @@ module ToSource
     #
     def send(node)
       if node.name == :'!'
-        emit '!'
+        emit('!')
         dispatch(node.receiver)
         return
       end
 
       unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
         dispatch(node.receiver)
-        emit '.'
+        emit('.')
       end
 
       emit(node.name)
 
-      if(node.block)
-        emit(' ')
-        dispatch(node.block)
+      block = node.block
+
+      if(block)
+        if block.kind_of?(Rubinius::AST::BlockPass)
+          emit('(')
+          block_pass(block)
+          emit(')')
+        else
+          iter(block)
+        end
       end
     end
 
@@ -582,9 +589,20 @@ module ToSource
       emit(node.name)
 
       emit('(')
-      dispatch(node.arguments)
+      actual_arguments(node.arguments)
+
+      block = node.block
+
+      is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
+
+      if is_block_pass
+        emit(', ')
+        block_pass(block)
+      end
+
       emit(')')
-      if node.block
+
+      if block and !is_block_pass
         emit(' ')
         dispatch(node.block) 
       end
@@ -615,7 +633,7 @@ module ToSource
     # @api private
     #
     def iter(node)
-      emit('do')
+      emit(' do')
 
       arguments = node.arguments
       unless arguments.names.empty?
@@ -1006,6 +1024,19 @@ module ToSource
       body(node.body)
 
       kend
+    end
+
+    # Emit block pass 
+    #
+    # @param [Rubinius::AST::Node] nod
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def block_pass(node)
+      emit('&')
+      dispatch(node.body)
     end
 
     # Emit return statement
