@@ -323,17 +323,39 @@ describe ToSource::Visitor,'.run' do
     RUBY
   end
 
+  context 'super' do
+    context 'without arguments' do
+      assert_source 'super'
+    end
+
+    context 'with argument' do
+      assert_source 'super(a)'
+    end
+
+    context 'with arguments' do
+      assert_source 'super(a, b)'
+    end
+
+    context 'with block argument' do
+      assert_source 'super(&block)'
+    end
+
+    context 'with formal and block argument' do
+      assert_source 'super(a, &block)'
+    end
+  end
+
   context 'yield' do
     context 'without arguments' do
       assert_source 'yield'
     end
 
     context 'with argument' do
-      assert_source 'yield a'
+      assert_source 'yield(a)'
     end
 
     context 'with arguments' do
-      assert_source 'yield a, b'
+      assert_source 'yield(a, b)'
     end
   end
 

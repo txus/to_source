@@ -56,7 +56,7 @@ module ToSource
       __send__(name, node)
     rescue NoMethodError
       node.ascii_graph
-      raise "Unsupported AST node: #{node.class}"
+      raise "Unsupported AST node: #{node.class} ToSource::Visitor##{name} is missing"
     end
 
     # Emit element assignment
@@ -524,6 +524,32 @@ module ToSource
       emit 'nil'
     end
 
+
+    # Emit argumentless super
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def z_super(node)
+      emit('super')
+    end
+
+    # Emit super
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def super(node)
+      z_super(node)
+      arguments(node)
+    end
+ 
     # Emit array body
     #
     # @param [Array] body
@@ -667,6 +693,37 @@ module ToSource
       end
     end
 
+    # Emit arguments
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def arguments(node)
+      array, block = node.arguments.array, node.block
+
+      return if array.empty? and block.nil?
+
+      emit('(')
+
+      array_body(array)
+      is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
+
+      if is_block_pass
+        emit(', ') unless array.empty?
+        block_pass(block)
+      end
+
+      emit(')')
+
+      if block and !is_block_pass
+        emit(' ')
+        dispatch(node.block) 
+      end
+    end
+
     # Emit self 
     #
     # @param [Rubinius::AST::Node] node
@@ -698,24 +755,7 @@ module ToSource
 
       emit(node.name)
 
-      emit('(')
-      actual_arguments(node.arguments)
-
-      block = node.block
-
-      is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
-
-      if is_block_pass
-        emit(', ')
-        block_pass(block)
-      end
-
-      emit(')')
-
-      if block and !is_block_pass
-        emit(' ')
-        dispatch(node.block) 
-      end
+      arguments(node)
     end
 
     # Emit yield
@@ -728,11 +768,7 @@ module ToSource
     #
     def yield(node)
       emit('yield')
-      arguments = node.arguments
-      unless arguments.array.empty?
-        emit(' ')
-        actual_arguments(arguments)
-      end
+      arguments(node)
     end
 
     # Emit acutal arguments
@@ -744,11 +780,7 @@ module ToSource
     # @api private
     #
     def actual_arguments(node)
-      body = node.array
-      body.each_with_index do |argument, index|
-        dispatch(argument)
-        emit(', ') unless body.length == index + 1 # last element
-      end
+      array_body(node.array)
     end
 
     # Emit iteration
