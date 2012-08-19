@@ -229,7 +229,13 @@ describe ToSource::Visitor,'.run' do
     end
 
     context 'regexp' do
-      assert_source '/.*/'
+      context 'simple' do
+        assert_source '/.*/'
+      end
+
+      context 'with escapes' do
+        assert_source '/\//'
+      end
     end
 
     context 'dynamic string' do
