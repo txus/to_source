@@ -54,6 +54,9 @@ module ToSource
       name = node.node_name
       name = "#{name}_def" if %w[ class module ].include?(name)
       __send__(name, node)
+    rescue NoMethodError
+      node.ascii_graph
+      raise "Unsupported AST node: #{node.class}"
     end
 
     # Emit body with taking care on indentation
