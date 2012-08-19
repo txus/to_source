@@ -285,6 +285,16 @@ describe ToSource::Visitor,'.run' do
     context 'with formal and  block argument' do
       assert_source 'foo.bar(:baz, &baz)'
     end
+
+    context 'attribute assignment' do
+      context 'on foreign object' do
+        assert_source 'foo.bar= :baz'
+      end
+
+      context 'on self' do
+        assert_source 'self.foo= :bar'
+      end
+    end
   end
 
   context 'lambda' do

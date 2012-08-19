@@ -59,6 +59,22 @@ module ToSource
       raise "Unsupported AST node: #{node.class}"
     end
 
+    # Emit attribute assignment
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def attribute_assignment(node)
+      dispatch(node.receiver)
+      emit('.')
+      emit(node.name)
+      emit(' ')
+      actual_arguments(node.arguments)
+    end
+
     # Emit body with taking care on indentation
     #
     # @param [Rubinius::AST::Node] node
