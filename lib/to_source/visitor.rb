@@ -10,6 +10,8 @@ module ToSource
     # @return [String]
     #   returns the source code for ast node
     #
+    # @api private
+    #
     def self.run(node)
       new(node).output
     end
@@ -124,6 +126,8 @@ module ToSource
     # Emit to array
     #
     # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
     #
     # @api private
     #
@@ -257,7 +261,7 @@ module ToSource
     #
     # @api private
     #
-    def empty_body(*)
+    def empty_body(node)
       # do nothing
     end
 
@@ -429,7 +433,7 @@ module ToSource
 
     # Emit array body
     #
-    # @param [Array]
+    # @param [Array] body
     #
     # @return [undefined]
     #
@@ -1045,7 +1049,7 @@ module ToSource
 
     # Emit block pass 
     #
-    # @param [Rubinius::AST::Node] nod
+    # @param [Rubinius::AST::Node] node
     #
     # @return [undefined]
     #
