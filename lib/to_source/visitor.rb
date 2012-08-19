@@ -56,7 +56,7 @@ module ToSource
       __send__(name, node)
     rescue NoMethodError
       node.ascii_graph
-      raise "Unsupported AST node: #{node.class} ToSource::Visitor##{name} is missing"
+      raise
     end
 
     # Emit element assignment
@@ -769,6 +769,66 @@ module ToSource
     def yield(node)
       emit('yield')
       arguments(node)
+    end
+
+    # Emit receiver case statment
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def receiver_case(node)
+      emit('case ')
+      dispatch(node.receiver)
+      nl
+      node.whens.each do |branch|
+        dispatch(branch)
+      end
+      else_body = node.else
+      unless else_body.kind_of?(Rubinius::AST::NilLiteral)
+        emit('else')
+        nl
+        body(else_body)
+      end
+      kend
+    end
+
+    # Emit when
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def when(node)
+      emit('when ')
+      if node.single
+        dispatch(node.single)
+      end
+      if node.conditions
+        array_body(node.conditions.body)
+      end
+      if node.splat
+        dispatch(node.splat)
+      end
+      nl
+      body(node.body)
+    end
+
+    # Emit splat when
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def splat_when(node)
+      emit('*')
+      dispatch(node.condition)
     end
 
     # Emit acutal arguments

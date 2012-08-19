@@ -466,6 +466,47 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'case statement' do
+    context 'without else branch' do
+      assert_source <<-RUBY
+        case foo
+        when bar
+          baz
+        when baz
+          bar
+        end
+      RUBY
+    end
+
+    context 'with multivalued conditions' do
+      assert_source <<-RUBY
+        case foo
+        when bar, baz
+          :other
+        end
+      RUBY
+    end
+
+    context 'with splat operator' do
+      assert_source <<-RUBY
+        case foo
+        when *bar
+          :value
+        end
+      RUBY
+    end
+
+    context 'with else branch' do
+      assert_source <<-RUBY
+        case foo
+        when bar
+          baz
+        else
+          :foo
+        end
+      RUBY
+    end
+  end
 
   context 'while' do
     context 'single statement in body' do
