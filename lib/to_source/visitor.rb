@@ -1008,7 +1008,7 @@ module ToSource
       kend
     end
 
-    # Emit return
+    # Emit return statement
     #
     # @param [Rubinius::AST::Node] node
     #
@@ -1017,8 +1017,11 @@ module ToSource
     # @api private
     #
     def return(node)
-      emit 'return '
-      dispatch(node.value)
+      emit('return')
+      if node.value
+        emit(' ')
+        dispatch(node.value)
+      end
     end
 
     # Process binary operator

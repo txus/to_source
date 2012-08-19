@@ -424,7 +424,7 @@ describe ToSource::Visitor,'.run' do
       assert_source 'return 9'
     end
 
-    pending 'without expression' do
+    context 'without expression' do
       assert_source 'return'
     end
   end
