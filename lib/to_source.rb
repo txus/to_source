@@ -1,13 +1,17 @@
-require "to_source/version"
-require "to_source/visitor"
+require 'to_source/version'
+require 'to_source/visitor'
 
+# Namespace of library
 module ToSource
-  # Public: Converts the node back to its original source code.
+  # Convert node to string
   #
-  # Returns the String output.
-  def to_source
-    Visitor.run(self)
+  # @param [Rubinius::AST::Node] node
+  #
+  # @return [String]
+  #
+  # @api private
+  #
+  def self.to_source(node)
+    Visitor.run(node)
   end
 end
-
-Rubinius::AST::Node.send :include, ToSource

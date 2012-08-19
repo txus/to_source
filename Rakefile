@@ -1,10 +1,6 @@
-require "bundler/gem_tasks"
+require 'rake'
 
-require 'rake/testtask'
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/**/*_test.rb']
-  t.verbose = true
-end
+FileList['tasks/**/*.rake'].each { |task| import task }
 
-task :default => :test
+desc 'Default: run all specs'
+task :default => :spec
