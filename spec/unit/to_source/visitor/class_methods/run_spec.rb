@@ -283,6 +283,16 @@ describe ToSource::Visitor,'.run' do
       end
     end
 
+    context 'dynamic symbol' do
+      context 'simple' do
+        assert_source ':"foo#{bar}baz"'
+      end
+
+      context 'with escapes' do
+        assert_source ':"fo\no#{bar}b\naz"'
+      end
+    end
+
     context 'dynamic execute' do
       context 'simple' do
         assert_source '`foo#{bar}baz`'

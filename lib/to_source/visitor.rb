@@ -398,6 +398,19 @@ module ToSource
       emit('"')
     end
 
+    # Emit dynamic symbol
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def dynamic_symbol(node)
+      emit(':')
+      dynamic_string(node)
+    end
+
     # Emit to array
     #
     # @param [Rubinius::AST::Node] node
