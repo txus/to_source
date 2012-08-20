@@ -260,6 +260,10 @@ describe ToSource::Visitor,'.run' do
   end
 
   context 'send' do
+    context 'as element reference' do
+      assert_source 'foo[index]'
+    end
+
     context 'without arguments' do
       assert_source 'foo.bar'
     end
@@ -284,6 +288,16 @@ describe ToSource::Visitor,'.run' do
 
       context 'implicitly' do
         assert_source 'foo'
+      end
+
+      context 'with arguments' do
+        context 'implicitly' do
+          assert_source 'bar(:baz, :yeah)'
+        end
+
+        context 'explicitly' do
+          assert_source 'self.bar(:baz, :yeah)'
+        end
       end
     end
 

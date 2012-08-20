@@ -749,6 +749,28 @@ module ToSource
       emit '/'
     end
 
+
+    # Emit receiver
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [true]
+    #   returns true if there is an explicit receiver
+    #
+    # @return [false]
+    #   returns false otherwise
+    #
+    # @api private
+    #
+    def receiver(node)
+      unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
+        dispatch(node.receiver)
+        true
+      else
+        false
+      end
+    end
+
     # Emit send literal
     #
     # @param [Rubinius::AST::Node] node
@@ -764,8 +786,7 @@ module ToSource
         return
       end
 
-      unless node.receiver.is_a?(Rubinius::AST::Self) and node.privately
-        dispatch(node.receiver)
+      if receiver(node)
         emit('.')
       end
 
@@ -792,12 +813,12 @@ module ToSource
     #
     # @api private
     #
-    def arguments(node)
+    def arguments(node,open='(',close=')')
       array, block = node.arguments.array, node.block
 
       return if array.empty? and block.nil?
 
-      emit('(')
+      emit(open)
 
       array_body(array)
       is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
@@ -807,7 +828,7 @@ module ToSource
         block_pass(block)
       end
 
-      emit(')')
+      emit(close)
 
       if block and !is_block_pass
         emit(' ')
@@ -827,6 +848,21 @@ module ToSource
       emit 'self'
     end
 
+    # Emit element reference
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def element_reference(node)
+      unless node.receiver.is_a?(Rubinius::AST::Self)
+        dispatch(node.receiver)
+      end
+
+      arguments(node,'[',']')
+    end
 
     # Emit send with arguments 
     #
@@ -837,10 +873,12 @@ module ToSource
     # @api private
     #
     def send_with_arguments(node)
+      if node.name == :[]
+        return element_reference(node)
+      end
       return if process_binary_operator(node) # 1 * 2, a / 3, true && false
 
-      unless node.receiver.is_a?(Rubinius::AST::Self)
-        dispatch(node.receiver)
+      if receiver(node)
         emit('.')
       end
 
