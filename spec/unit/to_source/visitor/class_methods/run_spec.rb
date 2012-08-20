@@ -422,6 +422,10 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'break' do
+    assert_source 'break'
+  end
+
   context 'next' do
     assert_source 'next'
   end

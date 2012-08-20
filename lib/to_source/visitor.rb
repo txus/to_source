@@ -111,6 +111,18 @@ module ToSource
       dispatch(node.pattern)
     end
 
+    # Emit break
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def break(node)
+      emit('break')
+    end
+
     # Emit next
     #
     # @param [Rubinius::AST::Node] node
