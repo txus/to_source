@@ -651,6 +651,20 @@ module ToSource
       emit(node.name)
     end
 
+    # Emit defined check
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def defined(node)
+      emit('defined?(')
+      dispatch(node.expression)
+      emit(')')
+    end
+
     # Emit fixnum literal
     #
     # @param [Rubinius::AST::Node] node

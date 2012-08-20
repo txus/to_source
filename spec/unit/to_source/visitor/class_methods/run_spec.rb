@@ -163,6 +163,20 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'defined' do
+    context 'with instance varialbe' do
+      assert_source <<-RUBY
+        defined?(@foo)
+      RUBY
+    end
+
+    context 'with constant' do
+      assert_source <<-RUBY
+        defined?(Foo)
+      RUBY
+    end
+  end
+
   context 'access' do
     context 'on local variable' do
       assert_source <<-RUBY
