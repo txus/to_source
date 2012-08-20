@@ -231,6 +231,10 @@ describe ToSource::Visitor,'.run' do
       assert_source '"foo"'
     end
 
+    context 'execute string' do
+      assert_source '`foo`'
+    end
+
     context 'symbol' do
       assert_source ':foo'
     end

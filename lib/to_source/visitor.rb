@@ -747,6 +747,18 @@ module ToSource
       emit(node.string.inspect)
     end
 
+    # Emit execute string
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def execute_string(node)
+      emit("`#{node.string.inspect[1..-2]}`")
+    end
+
     # Emit symbol literal
     #
     # @param [Rubinius::AST::Node] node
