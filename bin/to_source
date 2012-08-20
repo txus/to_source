@@ -7,5 +7,10 @@ ARGV.each do |path|
   ast = source.to_ast
   next if ast.nil? # When file only has comments
   $stderr.puts(path)
-  $stdout.puts(ToSource.to_source(ast))
+  begin 
+    $stdout.puts(ToSource.to_source(ast))
+  rescue
+    ast.ascii_graph
+    raise
+  end
 end
