@@ -836,7 +836,6 @@ module ToSource
       emit 'nil'
     end
 
-
     # Emit argumentless super
     #
     # @param [Rubinius::AST::Node] node
@@ -860,6 +859,23 @@ module ToSource
     def super(node)
       z_super(node)
       arguments(node)
+    end
+
+    # Emit concat args
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def concat_args(node)
+      emit('[')
+      array_body(node.array.body)
+      emit(', ')
+      emit('*')
+      dispatch(node.rest)
+      emit(']')
     end
  
     # Emit array body

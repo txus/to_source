@@ -269,7 +269,13 @@ describe ToSource::Visitor,'.run' do
     end
 
     context 'array' do
-      assert_source '[1, 2, 3]'
+      context 'simple' do
+        assert_source '[1, 2, 3]'
+      end
+
+      context 'with splat' do
+        assert_source '[1, *foo]'
+      end
     end
 
     context 'empty hash' do
