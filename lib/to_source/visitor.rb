@@ -54,6 +54,9 @@ module ToSource
       name = node.node_name
       name = "#{name}_def" if %w[ class module ].include?(name)
       __send__(name, node)
+    rescue NoMethodError => exception
+      node.ascii_graph
+      raise exception.message
     end
 
     # Emit element assignment
@@ -73,6 +76,64 @@ module ToSource
       dispatch(value)
     end
 
+    # Emit rescue
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def rescue(node)
+      body(node.body)
+      dispatch(node.rescue)
+    end
+
+    # Emit rescue condition
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def rescue_condition(node)
+      emit('rescue')
+      if node.conditions
+        body = node.conditions.body
+        first = body.first
+        unless body.one? and first.kind_of?(Rubinius::AST::ConstantAccess) and first.name == :StandardError
+          emit(' ')
+          array_body(body)
+        end
+      end
+
+      if node.splat
+        emit(',') if node.conditions
+        emit(' ')
+        dispatch(node.splat)
+      end
+
+      if node.assignment
+        emit(' => ')
+        emit(node.assignment.name)
+      end
+      nl
+      body(node.body)
+    end
+
+    # Emit rescue splat
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def rescue_splat(node)
+      emit('*')
+      dispatch(node.value)
+    end
 
     # Emit ensure
     #
@@ -120,14 +181,14 @@ module ToSource
         when Rubinius::AST::EmptyBody
           node
         when Rubinius::AST::Block
-          # Hack to correctly indent ensure
-          if node.array.one? && node.array.first.kind_of?(Rubinius::AST::Ensure)
+          # Hack to correctly indent ensure or rescue
+          noindent = [Rubinius::AST::Ensure, Rubinius::AST::Rescue]
+          if node.array.one? && noindent.include?(node.array.first.class)
             @indentation-=1
             dispatch(node)
             return
-          else
-            node
           end
+          node
         else
           Rubinius::AST::Block.new(node.line, [node])
         end

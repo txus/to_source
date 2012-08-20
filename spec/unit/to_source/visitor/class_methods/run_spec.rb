@@ -546,6 +546,106 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'rescue' do
+    context 'without rescue condition' do
+      assert_source <<-RUBY
+        def foo
+          bar
+        rescue
+          baz
+        end
+      RUBY
+    end
+
+    context 'with rescue condition' do
+      context 'without assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError
+            baz
+          end
+        RUBY
+      end
+
+      context 'with assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError => exception
+            baz
+          end
+        RUBY
+      end
+    end
+
+    context 'with multivalued rescue condition' do
+      context 'without assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError, SomeOtherError
+            baz
+          end
+        RUBY
+      end
+
+      context 'with assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError, SomeOther => exception
+            baz
+          end
+        RUBY
+      end
+    end
+
+    context 'with normal and splat condition' do
+      context 'without assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError, *bar
+            baz
+          end
+        RUBY
+      end
+
+      context 'with assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue SomeError, *bar => exception
+            baz
+          end
+        RUBY
+      end
+    end
+
+    context 'with splat condition' do
+      context 'without assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue *bar
+            baz
+          end
+        RUBY
+      end
+
+      context 'with assignment' do
+        assert_source <<-RUBY
+          def foo
+            bar
+          rescue *bar => exception
+            baz
+          end
+        RUBY
+      end
+    end
+  end
+
   context 'ensure' do
     assert_source <<-RUBY
       def foo
