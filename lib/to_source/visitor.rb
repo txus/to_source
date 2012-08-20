@@ -593,6 +593,35 @@ module ToSource
       emit(node.name)
     end
 
+    # Emit global variable access
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def global_variable_access(node)
+      emit(node.name)
+    end
+
+    # Emit global variable assignment
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def global_variable_assignment(node)
+      if(node.value)
+        emit("%s = " % node.name)
+        dispatch(node.value)
+      else
+        emit(node.name)
+      end
+    end
+
     # Emit instance variable assignment
     #
     # @param [Rubinius::AST::Node] node

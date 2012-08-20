@@ -123,6 +123,10 @@ describe ToSource::Visitor,'.run' do
       assert_source '@foo = 1'
     end
 
+    context 'to global variable' do
+      assert_source '$foo = 1'
+    end
+
     context 'to constant' do
       assert_source 'SOME_CONSTANT = 1'
     end
@@ -150,6 +154,10 @@ describe ToSource::Visitor,'.run' do
       assert_source '@a, @b = 1, 2'
     end
 
+    context 'to global variable' do
+      assert_source '$a, $b = 1, 2'
+    end
+
     context 'unbalanced' do
       assert_source 'a, b = foo'
     end
@@ -161,6 +169,10 @@ describe ToSource::Visitor,'.run' do
         foo = 1
         foo
       RUBY
+    end
+
+    context 'on global variable' do
+      assert_source '$foo'
     end
 
     context 'on instance variable' do
