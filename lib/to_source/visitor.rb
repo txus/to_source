@@ -1406,6 +1406,18 @@ module ToSource
     alias_method :scoped_class_name, :scoped_constant
     alias_method :scoped_module_name, :scoped_constant
 
+    # Emit toplevel class name
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def toplevel_class_name(node)
+      emit("::#{node.name}")
+    end
+
     # Emit if expression
     #
     # @param [Rubinius::AST::Node] node

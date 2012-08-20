@@ -87,6 +87,13 @@ describe ToSource::Visitor,'.run' do
         end
       RUBY
     end
+    
+    context 'toplevel' do
+      assert_source <<-RUBY
+        class ::TestClass
+        end
+      RUBY
+    end
   end
 
   context 'module nodes' do
