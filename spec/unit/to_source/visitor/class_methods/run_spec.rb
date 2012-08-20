@@ -132,6 +132,11 @@ describe ToSource::Visitor,'.run' do
     assert_source 'foo[key] ||= bar'
   end
 
+  context 'attribute assignment on merge' do
+    assert_source 'self.foo |= bar'
+  end
+
+
   context 'element assignment' do
     assert_source 'array[index] = value'
   end

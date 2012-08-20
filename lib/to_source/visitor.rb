@@ -101,6 +101,22 @@ module ToSource
       dispatch(node.value)
     end
 
+    # Emit attribute assignment after merge
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def op_assign2(node)
+      dispatch(node.receiver)
+      emit('.')
+      emit(node.name)
+      emit(' |= ')
+      dispatch(node.value)
+    end
+
     # Emit rescue
     #
     # @param [Rubinius::AST::Node] node
