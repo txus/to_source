@@ -111,7 +111,7 @@ module ToSource
     #
     def rescue(node)
       body(node.body)
-      dispatch(node.rescue)
+      rescue_condition(node.rescue)
     end
 
     # Emit rescue condition
@@ -145,6 +145,10 @@ module ToSource
       end
       nl
       body(node.body)
+
+      if node.next
+        dispatch(node.next)
+      end
     end
 
     # Emit rescue splat

@@ -574,6 +574,27 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  pending 'begin' do
+    context 'simple' do
+      assert_source <<-RUBY
+        begin
+          foo
+          bar
+        end
+      RUBY
+    end
+
+    context 'with rescue condition' do
+      assert_source <<-RUBY
+        begin
+          foo
+        rescue
+          bar
+        end
+      RUBY
+    end
+  end
+
   context 'rescue' do
     context 'without rescue condition' do
       assert_source <<-RUBY
@@ -627,6 +648,18 @@ describe ToSource::Visitor,'.run' do
           end
         RUBY
       end
+    end
+
+    context 'with multiple rescue conditions' do
+      assert_source <<-RUBY
+        def foo
+          foo
+        rescue SomeError
+          bar
+        rescue
+          baz
+        end
+      RUBY
     end
 
     context 'with normal and splat condition' do
