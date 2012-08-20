@@ -85,6 +85,18 @@ module ToSource
       dispatch(value)
     end
 
+    # Emit alias
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def alias(node)
+      emit("alias #{node.to.value} #{node.from.value}")
+    end
+
     # Emit match operator
     #
     # @param [Rubinius::AST::Node] node

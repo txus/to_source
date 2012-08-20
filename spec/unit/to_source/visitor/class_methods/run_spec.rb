@@ -388,6 +388,12 @@ describe ToSource::Visitor,'.run' do
     RUBY
   end
 
+  context 'alias' do
+    assert_source <<-RUBY
+      alias foo bar
+    RUBY
+  end
+
   context 'yield' do
     context 'without arguments' do
       assert_source 'yield'
