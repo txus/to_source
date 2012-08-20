@@ -85,6 +85,22 @@ module ToSource
       dispatch(value)
     end
 
+    # Emit conditional element assignment
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def op_assign1(node)
+      receiver(node)
+      emit('[')
+      dispatch(node.arguments.array.first)
+      emit('] ||= ')
+      dispatch(node.value)
+    end
+
     # Emit rescue
     #
     # @param [Rubinius::AST::Node] node

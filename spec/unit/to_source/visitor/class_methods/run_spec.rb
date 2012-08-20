@@ -128,6 +128,10 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'conditional element assignment' do
+    assert_source 'foo[key] ||= bar'
+  end
+
   context 'element assignment' do
     assert_source 'array[index] = value'
   end
