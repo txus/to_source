@@ -1359,6 +1359,33 @@ module ToSource
       end
     end
 
+    # Emit begin
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def begin(node)
+      emit('begin')
+      nl
+
+      body = node.rescue
+      case body
+      when Rubinius::AST::Rescue
+        # Rescue is reserved keyword
+        __send__(:rescue,body)
+      when Rubinius::AST::Ensure
+        # Ensure is reserved keyword
+        __send__(:ensure,body)
+      else
+        body(node.rescue)
+      end
+
+      kend
+    end
+
     # Emit define on instances
     #
     # @param [Rubinius::AST::Node] node

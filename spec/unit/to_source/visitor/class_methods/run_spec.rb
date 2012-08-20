@@ -574,7 +574,7 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
-  pending 'begin' do
+  context 'begin' do
     context 'simple' do
       assert_source <<-RUBY
         begin
@@ -589,6 +589,16 @@ describe ToSource::Visitor,'.run' do
         begin
           foo
         rescue
+          bar
+        end
+      RUBY
+    end
+
+    context 'with with ensure' do
+      assert_source <<-RUBY
+        begin
+          foo
+        ensure
           bar
         end
       RUBY
