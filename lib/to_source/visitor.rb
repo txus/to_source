@@ -1050,25 +1050,30 @@ module ToSource
     #
     # @api private
     #
-    def arguments(node,open='(',close=')')
-      array, block = node.arguments.array, node.block
+    def arguments(node, open='(', close=')')
+      arguments = node.arguments
+      array, block = arguments.array, node.block
 
-      return if array.empty? and block.nil?
+      return if array.empty? and block.nil? and arguments.splat.nil?
 
       emit(open)
 
       array_body(array)
       is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
 
-      if is_block_pass
+      if arguments.splat
         emit(', ') unless array.empty?
+        dispatch(arguments.splat)
+      end
+
+      if is_block_pass
+        emit(', ') unless array.empty? 
         block_pass(block)
       end
 
       emit(close)
 
       if block and !is_block_pass
-        emit(' ')
         dispatch(node.block) 
       end
     end
@@ -1082,7 +1087,7 @@ module ToSource
     # @api private
     #
     def self(node)
-      emit 'self'
+      emit('self')
     end
 
     # Emit element reference
@@ -1195,6 +1200,19 @@ module ToSource
     def splat_when(node)
       emit('*')
       dispatch(node.condition)
+    end
+
+    # Emit splat value
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def splat_value(node)
+      emit('*')
+      dispatch(node.value)
     end
 
     # Emit acutal arguments

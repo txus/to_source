@@ -403,6 +403,27 @@ describe ToSource::Visitor,'.run' do
       RUBY
     end
 
+    context 'with splat argument' do
+      assert_source 'foo.bar(*args)'
+    end
+
+    context 'with formal and splat argument' do
+      assert_source 'foo.bar(foo, *args)'
+    end
+
+    context 'with formal splat and block argument' do
+      assert_source 'foo.bar(foo, *args, &block)'
+    end
+
+    context 'with formal splat and block' do
+      assert_source <<-RUBY
+        foo.bar(foo, *args) do
+          some_stuff
+        end
+      RUBY
+    end
+
+
     context 'with passing block argument' do
       assert_source 'foo.bar(&baz)'
     end
