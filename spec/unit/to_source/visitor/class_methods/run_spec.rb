@@ -135,6 +135,11 @@ describe ToSource::Visitor,'.run' do
       assert_source '$foo = 1'
     end
 
+    context 'to class variable' do
+      assert_source '@@foo = 1'
+    end
+
+
     context 'to constant' do
       assert_source 'SOME_CONSTANT = 1'
     end
@@ -160,6 +165,10 @@ describe ToSource::Visitor,'.run' do
 
     context 'to instance variable' do
       assert_source '@a, @b = 1, 2'
+    end
+
+    context 'to class variable' do
+      assert_source '@@a, @@b = 1, 2'
     end
 
     context 'to global variable' do
@@ -191,6 +200,10 @@ describe ToSource::Visitor,'.run' do
         foo = 1
         foo
       RUBY
+    end
+
+    context 'on class variable' do
+      assert_source '@@foo'
     end
 
     context 'on global variable' do

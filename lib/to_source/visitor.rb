@@ -610,6 +610,23 @@ module ToSource
       body(node.body)
     end
 
+    # Emit class variable assignment
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def class_variable_assignment(node)
+      if node.value
+        emit("#{node.name} = ")
+        dispatch(node.value)
+      else
+        emit(node.name)
+      end
+    end
+
     # Emit local variable assignment
     #
     # @param [Rubinius::AST::Node] node
@@ -625,6 +642,18 @@ module ToSource
       else
         emit(node.name)
       end
+    end
+
+    # Emit class variable
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def class_variable_access(node)
+      emit(node.name)
     end
 
     # Emit local variable access
