@@ -1,3 +1,4 @@
 * Fix parsing errors from ruby parser
   It breaks on def $keyword.
 * Do a metric driven refactor once flay flog and friends work.
+* Report bug about missing Rubinius::AST::SClass#body

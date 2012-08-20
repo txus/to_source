@@ -34,10 +34,18 @@ describe ToSource::Visitor,'.run' do
     it_should_behave_like 'a source generation method'
   end
 
-  context 'class nodes' do
+  context 'class' do
     context 'simple' do
       assert_source <<-RUBY
         class TestClass
+        end
+      RUBY
+    end
+
+    context 'singleton class inheritance' do
+      assert_source <<-RUBY
+        class << some_object
+          the_body
         end
       RUBY
     end

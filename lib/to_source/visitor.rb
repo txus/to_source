@@ -411,6 +411,27 @@ module ToSource
       dynamic_string(node)
     end
 
+    # Emit singleton class inheritance
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def s_class(node)
+      emit('class << ')
+      dispatch(node.receiver)
+      nl
+      # FIXME: attr_reader missing on Rubinius::AST::SClass
+      scope = node.instance_variable_get(:@body)
+      body = scope.body
+      if body
+        body(body)
+      end
+      kend
+    end
+
     # Emit to array
     #
     # @param [Rubinius::AST::Node] node
