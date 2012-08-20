@@ -980,7 +980,7 @@ module ToSource
           block_pass(block)
           emit(')')
         else
-          iter(block)
+          dispatch(block)
         end
       end
     end
@@ -1207,7 +1207,7 @@ module ToSource
     # @api private
     #
     def iter19(node)
-      emit('do')
+      emit(' do')
 
       arguments = node.arguments
       unless arguments.names.empty?

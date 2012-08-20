@@ -643,23 +643,33 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  # Note:
+  #
+  # Do not remove method_call from
+  #
+  # begin
+  #   stuff
+  # end.method_call 
+  #
+  # As 19mode would optimize begin end blocks away
+  #
   context 'begin' do
     context 'simple' do
       assert_source <<-RUBY
         begin
           foo
           bar
-        end
+        end.some_method
       RUBY
     end
 
     context 'with rescue condition' do
       assert_source <<-RUBY
-        begin
+        x = begin
           foo
         rescue
           bar
-        end
+        end.some_method
       RUBY
     end
 
@@ -669,7 +679,7 @@ describe ToSource::Visitor,'.run' do
           foo
         ensure
           bar
-        end
+        end.some_method
       RUBY
     end
   end
