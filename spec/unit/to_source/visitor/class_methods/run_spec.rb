@@ -382,6 +382,12 @@ describe ToSource::Visitor,'.run' do
     assert_source 'next'
   end
 
+  context 'match operator' do
+    assert_source <<-RUBY
+      foo =~ /bar/
+    RUBY
+  end
+
   context 'yield' do
     context 'without arguments' do
       assert_source 'yield'

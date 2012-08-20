@@ -85,6 +85,20 @@ module ToSource
       dispatch(value)
     end
 
+    # Emit match operator
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def match3(node)
+      dispatch(node.value)
+      emit(' =~ ')
+      dispatch(node.pattern)
+    end
+
     # Emit next
     #
     # @param [Rubinius::AST::Node] node
