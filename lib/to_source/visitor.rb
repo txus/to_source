@@ -54,9 +54,18 @@ module ToSource
       name = node.node_name
       name = "#{name}_def" if %w[ class module ].include?(name)
       __send__(name, node)
-    rescue NoMethodError => exception
-      node.ascii_graph
-      raise exception.message
+    end
+
+    # Emit file
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def file(node)
+      emit('__FILE__')
     end
 
     # Emit element assignment

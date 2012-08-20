@@ -646,6 +646,10 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context '__FILE__' do
+    assert_source '__FILE__'
+  end
+
   context 'ensure' do
     assert_source <<-RUBY
       def foo
