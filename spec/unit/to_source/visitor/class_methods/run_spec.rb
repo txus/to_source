@@ -378,6 +378,10 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  context 'next' do
+    assert_source 'next'
+  end
+
   context 'yield' do
     context 'without arguments' do
       assert_source 'yield'

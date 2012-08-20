@@ -85,6 +85,18 @@ module ToSource
       dispatch(value)
     end
 
+    # Emit next
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def next(node)
+      emit('next')
+    end
+
     # Emit conditional element assignment
     #
     # @param [Rubinius::AST::Node] node
