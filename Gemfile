@@ -1,36 +1,9 @@
-source 'https://rubygems.org'
+source :rubygems
 
 gemspec
 
-gem 'immutable', :git => 'https://github.com/dkubb/immutable.git', :ref => '4a4b7ddd138a32944fa0ddaff8412490cf9dd875'
-gem 'abstract',  :git => 'https://github.com/mbj/abstract.git'
+gem 'melbourne',           :git => 'https://github.com/mbj/melbourne.git'
+gem 'descendants_tracker', :git => 'https://github.com/dkubb/descendants_tracker.git'
+gem 'devtools',            :git => 'https://github.com/mbj/devtools.git', :branch => 'rspec-2-mutant'
 
-# Remove git version once original to_source is updated
-#gem 'to_source', :git => 'https://github.com/mbj/to_source'
-#gem 'to_source', :git => 'https://github.com/mbj/to_source.git'
-gem 'to_source', :path => '../to_source'
-
-group :development do
-  gem 'rake',    '~> 0.9.2'
-  gem 'yard',    '~> 0.8.1'
-  gem 'rspec',   '~> 2'
-  # Remove this once https://github.com/nex3/rb-inotify/pull/20 is solved.
-  # This patch makes rb-inotify a nice player with listen so it does not poll.
-  gem 'rb-inotify', :git => 'https://github.com/mbj/rb-inotify'
-end
-
-group :guard do
-  gem 'guard',         '~> 1.3.1'
-  gem 'guard-bundler', '~> 1.0.0'
-  gem 'guard-rspec',   '~> 1.2.0'
-end
-
-group :metrics do
-  gem 'flay',            '~> 1.4.2'
-  gem 'flog',            '~> 2.5.1'
-  gem 'reek',            '~> 1.2.8', :git => 'https://github.com/dkubb/reek.git'
-  gem 'roodi',           '~> 2.1.0'
-  gem 'yardstick',       '~> 0.5.0'
-  gem 'yard-spellcheck', '~> 0.1.5'
-  gem 'pelusa',          '~> 0.2.1'
-end
+eval File.read('Gemfile.devtools')
