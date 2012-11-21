@@ -917,6 +917,14 @@ describe ToSource::Visitor,'.run' do
         RUBY
       end
 
+      context 'with unnamed splat argument' do
+        assert_source <<-RUBY
+          def foo(*)
+            bar
+          end
+        RUBY
+      end
+
       context 'with splat argument' do
         assert_source <<-RUBY
           def foo(*bar)

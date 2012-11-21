@@ -1532,10 +1532,12 @@ module ToSource
         dispatch(node.defaults)
       end
 
-      if node.splat
+      if splat
         emit(', ') unless empty
         emit('*')
-        emit(node.splat)
+        unless splat == :@unnamed_splat
+          emit(splat)
+        end
       end
 
       if node.block_arg
