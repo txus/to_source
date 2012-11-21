@@ -1706,7 +1706,7 @@ module ToSource
     # @api private
     #
     def process_binary_operator(node)
-      operators = %w(+ - * / & | <<).map(&:to_sym)
+      operators = %w(+ - * / & | << == != =~ !~ > < ** ^).map(&:to_sym)
       return false unless operators.include?(node.name)
       return false if node.arguments.array.length != 1
 
