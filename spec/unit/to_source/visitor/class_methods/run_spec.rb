@@ -513,9 +513,9 @@ describe ToSource::Visitor,'.run' do
         assert_source "1 #{operator} 2"
       end
 
-#     context "operator on calls #{operator}" do
-#       assert_source "a #{operator} b"
-#     end
+      context "operator on calls #{operator}" do
+        assert_source "a #{operator} b"
+      end
     end
   end
 

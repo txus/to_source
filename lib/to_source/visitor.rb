@@ -1118,7 +1118,7 @@ module ToSource
       if node.name == :[]
         return element_reference(node)
       end
-      return if process_binary_operator(node) # 1 * 2, a / 3, true && false
+      return if process_binary_operator(node)
 
       if receiver(node)
         emit('.')
@@ -1701,14 +1701,18 @@ module ToSource
     #
     # @param [Rubinius::AST::Node] node
     #
-    # @return [undefined]
+    # @return [self]
+    #   if node was handled
+    #
+    # @return [nil]
+    #   otherwise
     #
     # @api private
     #
     def process_binary_operator(node)
       operators = %w(+ - * / & | << == != =~ !~ > < ** ^).map(&:to_sym)
-      return false unless operators.include?(node.name)
-      return false if node.arguments.array.length != 1
+      return unless operators.include?(node.name)
+      return if node.arguments.array.length != 1
 
       operand = node.arguments.array[0]
 
@@ -1718,6 +1722,8 @@ module ToSource
 
       emit(" #{node.name.to_s} ")
       dispatch(operand)
+
+      self
     end
   end
 end
