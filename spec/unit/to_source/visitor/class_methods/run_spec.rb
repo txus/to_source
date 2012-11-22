@@ -509,11 +509,15 @@ describe ToSource::Visitor,'.run' do
 
   context 'binary operators' do
     %w(+ - * / & | && || << == != < > =~ !~ ^ **).each do |operator|
-      context "operator on literals #{operator}" do
+      context "on literals #{operator}" do
         assert_source "1 #{operator} 2"
       end
 
-      context "operator on calls #{operator}" do
+      context "on self #{operator}" do
+        assert_source "self #{operator} b"
+      end
+
+      context "on calls #{operator}" do
         assert_source "a #{operator} b"
       end
     end

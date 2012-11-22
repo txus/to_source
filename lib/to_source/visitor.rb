@@ -1718,9 +1718,7 @@ module ToSource
 
       operand = node.arguments.array[0]
 
-      unless node.receiver.is_a?(Rubinius::AST::Self)
-        dispatch(node.receiver)
-      end
+      dispatch(node.receiver)
 
       emit(" #{node.name.to_s} ")
       dispatch(operand)
