@@ -697,6 +697,18 @@ module ToSource
       end
     end
 
+    # Emit nref global variable access
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def nth_ref(node)
+      emit("$#{node.which}")
+    end
+
     # Emit instance variable assignment
     #
     # @param [Rubinius::AST::Node] node

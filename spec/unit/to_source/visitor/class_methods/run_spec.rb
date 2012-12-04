@@ -213,6 +213,10 @@ describe ToSource::Visitor,'.run' do
       assert_source '@@foo'
     end
 
+    context 'on nth ref global variable' do
+      assert_source '$1'
+    end
+
     context 'on global variable' do
       assert_source '$foo'
     end
