@@ -25,14 +25,18 @@ To install it as a gem:
 And `require 'to_source'` from your code. Automatically, your AST nodes respond
 to the `#to_source` method.
 
-But if you're using Bundler, just put this in your Gemfile:
+But if you are using Bundler, just put this in your Gemfile:
 
     gem 'to_source'
 
 And just call `#to_source` in any AST node!
 
-## Who's this
+## Who is this
 
 This was made by [Josep M. Bach (Txus)](http://txustice.me) under the MIT
-license. I'm [@txustice](http://twitter.com/txustice) on twitter (where you
+license. I am [@txustice](http://twitter.com/txustice) on twitter (where you
 should probably follow me!).
+
+Also it was improved by [Markus Schirp (mbj)](https://github.com/mbj) to serv as 
+mutated AST => code generator in the [mutant](https://github.com/mbj/mutant) 
+mutation testing tool.
