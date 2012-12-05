@@ -512,7 +512,7 @@ describe ToSource::Visitor,'.run' do
   end
 
   context 'binary operators' do
-    %w(+ - * / & | && || << == != < <=> > =~ !~ ^ **).each do |operator|
+    %w(+ - * / & | && || << >> == === != < <=> > =~ !~ ^ **).each do |operator|
       context "on literals #{operator}" do
         assert_source "1 #{operator} 2"
       end
@@ -534,6 +534,10 @@ describe ToSource::Visitor,'.run' do
 
     context 'on -= operator' do
       assert_converts 'a = a - 2', 'a -= 2'
+    end
+
+    context 'on **= operator' do
+      assert_converts 'a = a ** 2', 'a **= 2'
     end
 
     context 'on *= operator' do

@@ -1711,6 +1711,12 @@ module ToSource
       end
     end
 
+    OPERATORS = %w(
+      + - * / & | && || << >> == 
+      === != < <=> > =~ !~ ^ 
+      **
+    ).map(&:to_sym).to_set
+
     # Process binary operator
     #
     # @param [Rubinius::AST::Node] node
@@ -1724,15 +1730,15 @@ module ToSource
     # @api private
     #
     def process_binary_operator(node)
-      operators = %w(+ - * / & | << == != =~ !~ > <=> < ** ^).map(&:to_sym)
-      return unless operators.include?(node.name)
+      name = node.name
+      return unless OPERATORS.include?(name)
       return if node.arguments.array.length != 1
 
       operand = node.arguments.array[0]
 
       dispatch(node.receiver)
 
-      emit(" #{node.name.to_s} ")
+      emit(" #{name.to_s} ")
       dispatch(operand)
 
       self
