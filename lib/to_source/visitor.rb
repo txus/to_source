@@ -1713,7 +1713,7 @@ module ToSource
 
     OPERATORS = %w(
       + - * / & | && || << >> == 
-      === != < <=> > =~ !~ ^ 
+      === != <= < <=> > => =~ !~ ^ 
       **
     ).map(&:to_sym).to_set
 

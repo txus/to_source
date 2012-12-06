@@ -512,7 +512,7 @@ describe ToSource::Visitor,'.run' do
   end
 
   context 'binary operators' do
-    %w(+ - * / & | && || << >> == === != < <=> > =~ !~ ^ **).each do |operator|
+    %w(+ - * / & | && || << >> == === != <= < <=> > => =~ !~ ^ **).each do |operator|
       context "on literals #{operator}" do
         assert_source "1 #{operator} 2"
       end
