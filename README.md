@@ -30,7 +30,7 @@ Credits
 -------
 
 * [Josep M. Bach (Txus)](http://txustice.me), [@txustice](http://twitter.com/txustice) on twitter
-* [Markus Schirp (mbj)](https://github.com/mbj) [@_m_b_j_](http://twitter.com/_m_b_j_)
+* [Markus Schirp (mbj)](https://github.com/mbj), [@_m_b_j_](http://twitter.com/_m_b_j_) on twitter
 
 Contributing
 -------------
