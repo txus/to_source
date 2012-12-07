@@ -20,8 +20,8 @@ require 'to_source'
 some_code = "a = 123"
 ast = some_code.to_ast
 # => #<Rubinius::AST::LocalVariableAssignment:0x21b8
-        @value=#<Rubinius::AST::FixnumLiteral:0x21bc @value=123 @line=1>
-        @variable=nil @line=1 @name=:a>
+#       @value=#<Rubinius::AST::FixnumLiteral:0x21bc @value=123 @line=1>
+#       @variable=nil @line=1 @name=:a>
 ast.to_source
 # => "a = 123"
 ```
