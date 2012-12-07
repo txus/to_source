@@ -46,8 +46,7 @@ Contributing
 License
 -------
 
-Copyright (c) 2012 Josep M. Bach (Txus)
-Copyright (c) 2012 Markus Schirp (mbj)
+Copyright (c) 2012 Josep M. Bach (Txus), Markus Schirp (mbj)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
