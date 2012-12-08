@@ -20,7 +20,7 @@ describe ToSource::Visitor,'.run' do
   end
 
   def self.assert_source(source)
-    let(:node)            { source.to_ast }
+    let(:node)            { puts source; source.to_ast }
     let(:source)          { source        }
     let(:expected_source) { source        }
 
@@ -398,6 +398,14 @@ describe ToSource::Visitor,'.run' do
       end
     end
 
+    context 'with block that takes pattern arguments' do
+      assert_source <<-RUBY
+        foo.bar do |(a, b), c|
+          d
+        end
+      RUBY
+    end
+
     context 'with block that takes arguments' do
       assert_source <<-RUBY 
         foo.bar do |a|
@@ -427,6 +435,13 @@ describe ToSource::Visitor,'.run' do
       RUBY
     end
 
+    context 'with splat and block argument' do
+      assert_source <<-RUBY
+        def foo.bar(*args, &block)
+          some_stuff
+        end
+      RUBY
+    end
 
     context 'with passing block argument' do
       assert_source 'foo.bar(&baz)'
@@ -524,6 +539,11 @@ describe ToSource::Visitor,'.run' do
       context "on calls #{operator}" do
         assert_source "a #{operator} b"
       end
+
+    end
+
+    pending 'nested binary operators' do
+      assert_source "(a or b) || c"
     end
   end
 
@@ -564,6 +584,22 @@ describe ToSource::Visitor,'.run' do
 
     context 'double negation' do
       assert_source '!!1'
+    end
+
+    pending 'unary match' do
+      assert_source '~a'
+    end
+
+    pending 'unary match' do
+      assert_source '~a'
+    end
+
+    pending 'unary minus' do
+      assert_source '-a'
+    end
+
+    pending 'unary plus' do
+      assert_source '+a'
     end
   end
 

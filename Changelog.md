@@ -1,3 +1,8 @@
+# v0.2.1 2012-12-07
+
+* [fixed] Emit of def on splat with block
+* [fixed] Emit of pattern args 
+
 # v0.2.0 2012-12-07
 
 * [BRAKING CHANGE] Remove core extension Rubinius::AST::Node#to_source (mbj)

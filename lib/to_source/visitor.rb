@@ -16,6 +16,28 @@ module ToSource
       new(node).output
     end
 
+    # Return handler registry
+    #
+    # @return [Hash]
+    #
+    # @api private
+    #
+    def self.registry
+      @registry ||= {}
+    end
+
+    # Register handler class
+    #
+    # @param [Class:Rubinius::AST::Node] node_klass
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def self.register(node_klass)
+      registry[node_klass]=self
+    end
+
     # Return the source code of AST
     #
     # @return [String]
@@ -51,9 +73,14 @@ module ToSource
     # @api private
     #
     def dispatch(node)
-      name = node.node_name
-      name = "#{name}_def" if %w[ class module ].include?(name)
-      __send__(name, node)
+      handler = self.class.registry.fetch(node.class) do
+        name = node.node_name
+        name = "#{name}_def" if %w(class module).include?(name)
+        __send__(name, node)
+        nil
+      end
+
+      handler.run(self, node) if handler
     end
 
     # Emit file
@@ -1522,6 +1549,24 @@ module ToSource
       kend
     end
 
+    # Emit pattern arguments
+    #
+    # @param [Rubinius::AST::PatternArguments] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def pattern_arguments(node)
+      emit('(')
+      arguments = node.arguments.body
+      arguments.each_with_index do |argument, index|
+        emit(argument.name)
+        emit(', ') unless index == arguments.size - 1
+      end
+      emit(')')
+    end
+
     # Emit formal arguments as shared between ruby18 and ruby19 mode
     #
     # @param [Rubinius::AST::Node] node
@@ -1535,7 +1580,15 @@ module ToSource
       required, defaults, splat = node.required, node.defaults, node.splat
 
       emit(open)
-      emit(required.join(', '))
+
+      required.each_with_index do |node, index|
+        if node.kind_of?(Rubinius::AST::Node)
+          dispatch(node)
+        else
+          emit(node)
+        end
+        emit(', ') unless index == required.size-1
+      end
 
       empty = required.empty?
 
@@ -1547,6 +1600,7 @@ module ToSource
       if splat
         emit(', ') unless empty
         emit('*')
+        empty = false
         unless splat == :@unnamed_splat
           emit(splat)
         end
