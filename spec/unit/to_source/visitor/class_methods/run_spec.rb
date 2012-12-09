@@ -20,7 +20,7 @@ describe ToSource::Visitor,'.run' do
   end
 
   def self.assert_source(source)
-    let(:node)            { puts source; source.to_ast }
+    let(:node)            { source.to_ast }
     let(:source)          { source        }
     let(:expected_source) { source        }
 
