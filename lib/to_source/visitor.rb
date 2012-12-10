@@ -1553,6 +1553,18 @@ module ToSource
       kend
     end
 
+    # Emit pattern variable
+    #
+    # @param [Rubinius::AST::PatternVariable] node
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def pattern_variable(node)
+      emit(node.name)
+    end
+
     # Emit pattern arguments
     #
     # @param [Rubinius::AST::PatternArguments] node
@@ -1565,7 +1577,7 @@ module ToSource
       emit('(')
       arguments = node.arguments.body
       arguments.each_with_index do |argument, index|
-        emit(argument.name)
+        dispatch(argument)
         emit(', ') unless index == arguments.size - 1
       end
       emit(')')
@@ -1752,6 +1764,7 @@ module ToSource
       emit('&')
       dispatch(node.body)
     end
+    alias_method :block_pass19, :block_pass
 
     # Emit return statement
     #

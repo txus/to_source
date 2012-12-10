@@ -1,6 +1,7 @@
 # v0.2.4 2012-12-07
 
-* [fixed] Emplit send with splat and block argument correctly
+* [feature] Allow to emit pattern variables as root node
+* [fixed] Emit send with splat and block argument correctly
 
 [Compare v0.2.3..v0.2.4](https://github.com/mbj/to_source/compare/v0.2.3...v0.2.4)
 
