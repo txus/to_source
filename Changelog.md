@@ -1,3 +1,9 @@
+# v0.2.3 2012-12-07
+
+* [fixed] Nuke dangling require  (sorry for not running specs after gemspec change)
+
+[Compare v0.2.2..v0.2.3](https://github.com/mbj/to_source/compare/v0.2.2...v0.2.3)
+
 # v0.2.2 2012-12-07
 
 * [fixed] Emit of pattern arguments with no formal arguments present

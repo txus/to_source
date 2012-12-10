@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name        = 'to_source'
-  s.version     = '0.2.2'
+  s.version     = '0.2.3'
   s.authors     = ['Josep M. Bach', 'Markus Schirp']
   s.email       = ['josep.m.bach@gmail.com', 'mbj@seonic.net']
   s.homepage    = 'http://github.com/txus/to_source'
