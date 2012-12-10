@@ -1,3 +1,9 @@
+# v0.2.4 2012-12-07
+
+* [fixed] Emplit send with splat and block argument correctly
+
+[Compare v0.2.3..v0.2.4](https://github.com/mbj/to_source/compare/v0.2.3...v0.2.4)
+
 # v0.2.3 2012-12-07
 
 * [fixed] Nuke dangling require  (sorry for not running specs after gemspec change)

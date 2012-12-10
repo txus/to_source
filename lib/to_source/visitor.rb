@@ -1047,7 +1047,7 @@ module ToSource
       end
     end
 
-    # Emit send literal
+    # Emit send node
     #
     # @param [Rubinius::AST::Node] node
     #
@@ -1100,13 +1100,16 @@ module ToSource
       array_body(array)
       is_block_pass = block.kind_of?(Rubinius::AST::BlockPass)
 
+      empty = array.empty?
+
       if arguments.splat
-        emit(', ') unless array.empty?
+        emit(', ') unless empty
         dispatch(arguments.splat)
+        empty = false
       end
 
       if is_block_pass
-        emit(', ') unless array.empty? 
+        emit(', ') unless empty
         block_pass(block)
       end
 
@@ -1157,6 +1160,7 @@ module ToSource
       if node.name == :[]
         return element_reference(node)
       end
+
       return if process_binary_operator(node)
 
       if receiver(node)

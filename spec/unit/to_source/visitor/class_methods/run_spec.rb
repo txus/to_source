@@ -438,17 +438,13 @@ describe ToSource::Visitor,'.run' do
 
     context 'with formal splat and block' do
       assert_source <<-RUBY
-        foo.bar(foo, *args) do
-          some_stuff
-        end
+        foo(bar, *args)
       RUBY
     end
 
     context 'with splat and block argument' do
       assert_source <<-RUBY
-        def foo.bar(*args, &block)
-          some_stuff
-        end
+        foo(*args, &block)
       RUBY
     end
 
@@ -1008,7 +1004,7 @@ describe ToSource::Visitor,'.run' do
 
       context 'with block argument' do
         assert_source <<-RUBY
-          def foor(&block)
+          def foo(&block)
             bar
           end
         RUBY
@@ -1016,7 +1012,15 @@ describe ToSource::Visitor,'.run' do
 
       context 'with required and block arguments' do
         assert_source <<-RUBY
-          def foor(bar, &block)
+          def foo(bar, &block)
+            bar
+          end
+        RUBY
+      end
+
+      context 'with spat and block arguments' do
+        assert_source <<-RUBY
+          def foo(*bar, &block)
             bar
           end
         RUBY
