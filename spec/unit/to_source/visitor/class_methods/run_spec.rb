@@ -398,9 +398,18 @@ describe ToSource::Visitor,'.run' do
       end
     end
 
-    context 'with block that takes pattern arguments' do
+    context 'with block that takes pattern and formal arguments' do
       assert_source <<-RUBY
         foo.bar do |(a, b), c|
+          d
+        end
+      RUBY
+    end
+
+
+    context 'with block that takes pattern and no formal arguments' do
+      assert_source <<-RUBY
+        foo.bar do |(a, b)|
           d
         end
       RUBY

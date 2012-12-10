@@ -1,5 +1,6 @@
 # v0.2.2 2012-12-07
 
+* [fixed] Emit of pattern arguments with no formal arguments present
 * [fixed] Missed to require set
 
 [Compare v0.2.1..v0.2.2](https://github.com/mbj/to_source/compare/v0.2.1...v0.2.2)

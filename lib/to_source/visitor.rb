@@ -1324,7 +1324,7 @@ module ToSource
       emit(' do')
 
       arguments = node.arguments
-      unless arguments.names.empty?
+      unless arguments.required.empty?
         emit(' ')
         formal_arguments_generic(node.arguments,'|','|')
       end
@@ -1575,9 +1575,9 @@ module ToSource
     #
     # @api private
     #
-    def formal_arguments_generic(node,open,close)
-      return if node.names.empty? 
-      required, defaults, splat = node.required, node.defaults, node.splat
+    def formal_arguments_generic(node, open, close)
+      required, defaults, splat, block_arg = node.required, node.defaults, node.splat, node.block_arg
+      return unless required.any? or defaults or splat or block_arg
 
       emit(open)
 
@@ -1606,10 +1606,10 @@ module ToSource
         end
       end
 
-      if node.block_arg
+      if block_arg
         emit(', ') unless empty
 
-        dispatch(node.block_arg)
+        dispatch(block_arg)
       end
 
       emit(close)
