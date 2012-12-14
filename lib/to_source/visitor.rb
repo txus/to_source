@@ -148,6 +148,10 @@ module ToSource
     #
     def break(node)
       emit('break')
+      if node.value.class != Rubinius::AST::NilLiteral
+        emit(' ')
+        dispatch(node.value)
+      end
     end
 
     # Emit next
@@ -1047,6 +1051,39 @@ module ToSource
       end
     end
 
+    UNARY_OPERATORS = %w(
+      ! ~ -@ +@
+    ).map(&:to_sym).to_set.freeze
+
+    UNARY_MAPPING = {
+      :-@ => :-,
+      :+@ => :+,
+    }.freeze
+
+    # Emit unary operator
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @return [true]
+    #   if node was emitted
+    #
+    # @return [false]
+    #   otherwise
+    #
+    # @api private
+    #
+    def unary_operator(node)
+      name = node.name
+
+      if UNARY_OPERATORS.include?(name)
+        emit(UNARY_MAPPING.fetch(name, name))
+        dispatch(node.receiver)
+        return true
+      end
+
+      false
+    end
+
     # Emit send node
     #
     # @param [Rubinius::AST::Node] node
@@ -1056,11 +1093,7 @@ module ToSource
     # @api private
     #
     def send(node)
-      if node.name == :'!'
-        emit('!')
-        dispatch(node.receiver)
-        return
-      end
+      return if unary_operator(node)
 
       if receiver(node)
         emit('.')
@@ -1141,10 +1174,7 @@ module ToSource
     # @api private
     #
     def element_reference(node)
-      unless node.receiver.is_a?(Rubinius::AST::Self)
-        dispatch(node.receiver)
-      end
-
+      dispatch(node.receiver)
       arguments(node,'[',']')
     end
 
@@ -1378,9 +1408,11 @@ module ToSource
     # @api private
     #
     def and(node)
+      emit('(')
       dispatch(node.left)
       emit(' && ')
       dispatch(node.right)
+      emit(')')
     end
 
     # Emit or
@@ -1392,9 +1424,11 @@ module ToSource
     # @api private
     #
     def or(node)
+      emit('(')
       dispatch(node.left)
       emit(' || ')
       dispatch(node.right)
+      emit(')')
     end
 
     # Emit and operation with assignment
@@ -1611,6 +1645,7 @@ module ToSource
       if defaults
         emit(', ') unless empty
         dispatch(node.defaults)
+        empty = false
       end
 
       if splat
@@ -1807,12 +1842,13 @@ module ToSource
 
       operand = node.arguments.array[0]
 
+      emit('(')
       dispatch(node.receiver)
 
       emit(" #{name.to_s} ")
       dispatch(operand)
 
-      self
+      emit(')')
     end
   end
 end

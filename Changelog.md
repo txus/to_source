@@ -1,3 +1,12 @@
+# v0.2.5 2012-12-14
+
+* [fixed] Emit unary operators correctly
+* [fixed] Define with optional splat and block argument
+* [fixed] Emit arguments to break keyword
+* [change] Uglify output of binary operators with unneded paranteses. Correct output > nice output.
+* [fixed] Emit nested binary operators correctly.
+* [fixed] Emit element reference on self correctly. self[foo].
+
 # v0.2.4 2012-12-07
 
 * [feature] Allow to emit pattern variables as root node

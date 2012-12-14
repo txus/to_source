@@ -361,6 +361,10 @@ describe ToSource::Visitor,'.run' do
       assert_source 'foo[index]'
     end
 
+    context 'as element reference on self' do
+      assert_source 'self[foo]'
+    end
+
     context 'without arguments' do
       assert_source 'foo.bar'
     end
@@ -501,6 +505,10 @@ describe ToSource::Visitor,'.run' do
     assert_source 'break'
   end
 
+  context 'break with arguments' do
+    assert_source 'break a'
+  end
+
   context 'next' do
     assert_source 'next'
   end
@@ -534,43 +542,43 @@ describe ToSource::Visitor,'.run' do
   context 'binary operators' do
     %w(+ - * / & | && || << >> == === != <= < <=> > >= =~ !~ ^ **).each do |operator|
       context "on literals #{operator}" do
-        assert_source "1 #{operator} 2"
+        assert_source "(1 #{operator} 2)"
       end
 
       context "on self #{operator}" do
-        assert_source "self #{operator} b"
+        assert_source "(self #{operator} b)"
       end
 
       context "on calls #{operator}" do
-        assert_source "a #{operator} b"
+        assert_source "(a #{operator} b)"
       end
 
     end
 
-    pending 'nested binary operators' do
-      assert_source "(a or b) || c"
+    context 'nested binary operators' do
+      assert_source '(a || (b || c))'
     end
   end
 
   context 'expansion of shortcuts' do
     context 'on += operator' do
-      assert_converts 'a = a + 2', 'a += 2'
+      assert_converts 'a = (a + 2)', 'a += 2'
     end
 
     context 'on -= operator' do
-      assert_converts 'a = a - 2', 'a -= 2'
+      assert_converts 'a = (a - 2)', 'a -= 2'
     end
 
     context 'on **= operator' do
-      assert_converts 'a = a ** 2', 'a **= 2'
+      assert_converts 'a = (a ** 2)', 'a **= 2'
     end
 
     context 'on *= operator' do
-      assert_converts 'a = a * 2', 'a *= 2'
+      assert_converts 'a = (a * 2)', 'a *= 2'
     end
 
     context 'on /= operator' do
-      assert_converts 'a = a / 2', 'a /= 2'
+      assert_converts 'a = (a / 2)', 'a /= 2'
     end
 
     context 'on &&= operator' do
@@ -591,19 +599,15 @@ describe ToSource::Visitor,'.run' do
       assert_source '!!1'
     end
 
-    pending 'unary match' do
+    context 'unary match' do
       assert_source '~a'
     end
 
-    pending 'unary match' do
-      assert_source '~a'
-    end
-
-    pending 'unary minus' do
+    context 'unary minus' do
       assert_source '-a'
     end
 
-    pending 'unary plus' do
+    context 'unary plus' do
       assert_source '+a'
     end
   end
@@ -989,6 +993,22 @@ describe ToSource::Visitor,'.run' do
       context 'with required and splat arguments' do
         assert_source <<-RUBY
           def foo(bar, *baz)
+            bar
+          end
+        RUBY
+      end
+
+      context 'with optional and splat argument' do
+        assert_source <<-RUBY
+          def foo(baz = true, *bor)
+            bar
+          end
+        RUBY
+      end
+
+      context 'with optional and splat and block argument' do
+        assert_source <<-RUBY
+          def foo(baz = true, *bor, &block)
             bar
           end
         RUBY
