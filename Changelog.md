@@ -1,3 +1,9 @@
+# v0.2.7 2013-01-2
+
+* [fixed] Emit super with blocks correctly
+
+[Compare v0.2.6..v0.2.7](https://github.com/mbj/to_source/compare/v0.2.6...v0.2.7)
+
 # v0.2.6 2013-01-1
 
 * [fixed] Emit super vs super() correctly

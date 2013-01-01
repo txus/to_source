@@ -484,16 +484,48 @@ describe ToSource::Visitor,'.run' do
       assert_source 'super'
     end
 
+    context 'without arguments and block' do
+      assert_source <<-RUBY
+        super do
+          foo
+        end
+      RUBY
+    end
+
     context 'with explicit zero arguments' do
       assert_source 'super()'
+    end
+
+    context 'with explicit zero arguments and block' do
+      assert_source <<-RUBY
+        super() do
+          foo
+        end
+      RUBY
     end
 
     context 'with argument' do
       assert_source 'super(a)'
     end
 
+    context 'with argument and block' do
+      assert_source <<-RUBY
+        super(a) do
+          foo
+        end
+      RUBY
+    end
+
     context 'with arguments' do
       assert_source 'super(a, b)'
+    end
+
+    context 'with arguments and block' do
+      assert_source <<-RUBY
+        super(a, b) do
+          foo
+        end
+      RUBY
     end
 
     context 'with block argument' do
