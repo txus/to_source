@@ -484,6 +484,10 @@ describe ToSource::Visitor,'.run' do
       assert_source 'super'
     end
 
+    context 'with explicit zero arguments' do
+      assert_source 'super()'
+    end
+
     context 'with argument' do
       assert_source 'super(a)'
     end
@@ -1040,8 +1044,13 @@ describe ToSource::Visitor,'.run' do
 
       context 'with spat and block arguments' do
         assert_source <<-RUBY
-          def foo(*bar, &block)
-            bar
+          def initialize(attributes, options)
+            @attributes = freeze_object(attributes)
+            @options = freeze_object(options)
+            @attribute_for = Hash[@attributes.map do |attribute|
+              attribute.name
+            end.zip(@attributes)]
+            @keys = coerce_keys
           end
         RUBY
       end

@@ -3,5 +3,4 @@
 * Do a metric driven refactor once flay flog and friends work.
 * Report bug about missing Rubinius::AST::SClass#body
 * Decide about to support 18-mode or not
-* Handle Rubinius::AST::PatternArguments
 * Fix emit of nested boolean uperators and parantheses!

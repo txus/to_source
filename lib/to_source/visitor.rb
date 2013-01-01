@@ -901,7 +901,12 @@ module ToSource
     #
     def super(node)
       z_super(node)
+      # Stupid hack to ensure super() is emitted, this lib needs a redesign!
+      arguments = node.arguments
+      empty = arguments.array.empty? && !arguments.splat && !node.block.kind_of?(Rubinius::AST::BlockPass19)
+      emit('(') if empty
       arguments(node)
+      emit(')') if empty
     end
 
     # Emit concat args
@@ -1175,7 +1180,7 @@ module ToSource
     #
     def element_reference(node)
       dispatch(node.receiver)
-      arguments(node,'[',']')
+      arguments(node, '[', ']')
     end
 
     # Emit send with arguments 

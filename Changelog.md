@@ -1,3 +1,7 @@
+# v0.2.6 2013-01-1
+
+* [fixed] Emit super vs super() correctly
+
 # v0.2.5 2012-12-14
 
 * [fixed] Emit unary operators correctly
