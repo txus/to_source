@@ -1,9 +1,9 @@
 to_source
 =========
 
-[![Build Status](https://secure.travis-ci.org/txus/to_source.png?branch=master)](http://travis-ci.org/txus/to_source)
-[![Dependency Status](https://gemnasium.com/txus/to_source.png)](https://gemnasium.com/txus/to_source)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/txus/to_source)
+[![Build Status](https://secure.travis-ci.org/mbj/to_source.png?branch=master)](http://travis-ci.org/mbj/to_source)
+[![Dependency Status](https://gemnasium.com/mbj/to_source.png)](https://gemnasium.com/mbj/to_source)
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/mbj/to_source)
 
 Reverse parser to generate source code from the Rubinius AST. Also works well under MRI. 
 
