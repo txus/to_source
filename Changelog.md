@@ -1,6 +1,8 @@
-# v0.2.9 2013-01-x
+# v0.2.9 2013-01-4
 
 * [fixed] Handle regexp literals containing slashes in non shash delimiters %r(/) correctly
+
+[Compare v0.2.8..v0.2.9](https://github.com/mbj/to_source/compare/v0.2.8...v0.2.9)
 
 # v0.2.8 2013-01-3
 
