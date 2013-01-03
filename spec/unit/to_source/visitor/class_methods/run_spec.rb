@@ -17,6 +17,13 @@ describe ToSource::Visitor,'.run' do
     it 'should create original source' do
       should eql(compress(expected_source))
     end
+
+    it 'should be able to round trip generated source also' do
+      generated = subject
+      ast = subject.to_ast
+      second = described_class.run(ast)
+      generated.should eql(second)
+    end
   end
 
   def self.assert_source(source)
@@ -542,7 +549,7 @@ describe ToSource::Visitor,'.run' do
   end
 
   context 'break with arguments' do
-    assert_source 'break a'
+    assert_source 'break(a)'
   end
 
   context 'next' do
@@ -616,13 +623,15 @@ describe ToSource::Visitor,'.run' do
     context 'on /= operator' do
       assert_converts 'a = (a / 2)', 'a /= 2'
     end
+  end
 
+  context 'shortcuts' do
     context 'on &&= operator' do
-      assert_converts 'a && a = 2', 'a &&= 2'
+      assert_source 'a &&= b'
     end
 
     context 'on ||= operator' do
-      assert_converts 'a || a = 2', 'a ||= 2'
+      assert_source 'a ||= 2'
     end
   end
 

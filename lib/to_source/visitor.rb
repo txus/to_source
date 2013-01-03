@@ -149,8 +149,9 @@ module ToSource
     def break(node)
       emit('break')
       if node.value.class != Rubinius::AST::NilLiteral
-        emit(' ')
+        emit('(')
         dispatch(node.value)
+        emit(')')
       end
     end
 
@@ -1448,8 +1449,8 @@ module ToSource
     #
     def op_assign_and(node)
       dispatch(node.left)
-      emit(' && ')
-      dispatch(node.right)
+      emit(' &&= ')
+      dispatch(node.right.value)
     end
 
     # Emit or operation with assignment
@@ -1462,8 +1463,8 @@ module ToSource
     #
     def op_assign_or(node)
       dispatch(node.left)
-      emit(' || ')
-      dispatch(node.right)
+      emit(' ||= ')
+      dispatch(node.right.value)
     end
     alias_method :op_assign_or19, :op_assign_or
 

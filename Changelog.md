@@ -1,5 +1,13 @@
 # v0.2.7 2013-01-2
 
+* [fixed] Emit break with parantheses
+* [fixed] Emit op assign and as "&&="
+* [fixed] Emit op assign or as "||="
+
+[Compare v0.2.7..v0.2.8](https://github.com/mbj/to_source/compare/v0.2.7...v0.2.8)
+
+# v0.2.7 2013-01-2
+
 * [fixed] Emit super with blocks correctly
 
 [Compare v0.2.6..v0.2.7](https://github.com/mbj/to_source/compare/v0.2.6...v0.2.7)
