@@ -1,3 +1,7 @@
+# v0.2.9 2013-01-x
+
+* [fixed] Handle regexp literals containing slashes in non shash delimiters %r(/) correctly
+
 # v0.2.8 2013-01-3
 
 * [Changed] Emit many times more ugly code, but correctnes > beautifulnes

@@ -320,6 +320,10 @@ describe ToSource::Visitor,'.run' do
       context 'with escapes' do
         assert_source '/\//'
       end
+
+      context 'with non slash literal containing slashes' do
+        assert_converts '/\//', '%r(/)'
+      end
     end
 
     context 'dynamic string' do

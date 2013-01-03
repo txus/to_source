@@ -1032,9 +1032,7 @@ module ToSource
     # @api private
     #
     def regex_literal(node)
-      emit '/'
-      emit node.source
-      emit '/'
+      emit(Regexp.new(node.source).inspect)
     end
 
 
