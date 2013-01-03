@@ -1,4 +1,4 @@
-# v0.2.7 2013-01-2
+# v0.2.8 2013-01-3
 
 * [Changed] Emit many times more ugly code, but correctnes > beautifulnes
 * [fixed] Emit break with parantheses
