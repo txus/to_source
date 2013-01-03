@@ -1,3 +1,4 @@
+* Do not emit parantheses around non keywords in binary operations (this will beautify source again)
 * Rewrite this library it is ultra hacky and adhoc 
 * Fix parsing errors from ruby parser
   It breaks on def $keyword.

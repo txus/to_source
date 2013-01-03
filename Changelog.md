@@ -1,5 +1,6 @@
 # v0.2.7 2013-01-2
 
+* [Changed] Emit many times more ugly code, but correctnes > beautifulnes
 * [fixed] Emit break with parantheses
 * [fixed] Emit op assign and as "&&="
 * [fixed] Emit op assign or as "||="

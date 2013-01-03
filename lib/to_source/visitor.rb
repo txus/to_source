@@ -1416,11 +1416,52 @@ module ToSource
     # @api private
     #
     def and(node)
+      binary(node, '&&')
+    end
+
+    # Call block while emitting parantheses
+    #
+    # @return [undefined]
+    #
+    # @api private
+    #
+    def parantheses
       emit('(')
-      dispatch(node.left)
-      emit(' && ')
-      dispatch(node.right)
+      yield
       emit(')')
+    end
+
+    # Emit binary operation
+    #
+    # @param [Rubnius::AST::Node] node
+    #
+    # @param [Symbol] symbol
+    #   the operation symbol
+    #
+    # @api private
+    #
+    def binary(node, symbol)
+      parantheses do
+        parantheses { dispatch(node.left) }
+        emit(" #{symbol} ")
+        parantheses { dispatch(node.right) }
+      end
+    end
+
+    # Emit binary shortcut
+    #
+    # @param [Rubinius::AST::Node] node
+    #
+    # @param [Symbol] symbol
+    #
+    # @api private
+    #
+    def binary_shortcut(node, symbol)
+      parantheses do
+        dispatch(node.left)
+        emit(" #{symbol} ")
+        parantheses { dispatch(node.right.value) }
+      end
     end
 
     # Emit or
@@ -1432,11 +1473,7 @@ module ToSource
     # @api private
     #
     def or(node)
-      emit('(')
-      dispatch(node.left)
-      emit(' || ')
-      dispatch(node.right)
-      emit(')')
+      binary(node, '||')
     end
 
     # Emit and operation with assignment
@@ -1448,9 +1485,7 @@ module ToSource
     # @api private
     #
     def op_assign_and(node)
-      dispatch(node.left)
-      emit(' &&= ')
-      dispatch(node.right.value)
+      binary_shortcut(node, :'&&=')
     end
 
     # Emit or operation with assignment
@@ -1462,9 +1497,7 @@ module ToSource
     # @api private
     #
     def op_assign_or(node)
-      dispatch(node.left)
-      emit(' ||= ')
-      dispatch(node.right.value)
+      binary_shortcut(node, :'||=')
     end
     alias_method :op_assign_or19, :op_assign_or
 
@@ -1846,17 +1879,14 @@ module ToSource
     def process_binary_operator(node)
       name = node.name
       return unless OPERATORS.include?(name)
-      return if node.arguments.array.length != 1
 
       operand = node.arguments.array[0]
 
-      emit('(')
-      dispatch(node.receiver)
-
-      emit(" #{name.to_s} ")
-      dispatch(operand)
-
-      emit(')')
+      parantheses do
+       parantheses { dispatch(node.receiver) }
+       emit(" #{name.to_s} ")
+       parantheses { dispatch(operand) }
+      end
     end
   end
 end
