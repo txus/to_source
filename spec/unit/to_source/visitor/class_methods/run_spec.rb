@@ -390,8 +390,13 @@ describe ToSource::Visitor,'.run' do
     end
 
     context 'to self' do
+
       context 'explicitly' do
         assert_source 'self.foo'
+      end
+
+      context 'explicitly with message name equals a keyword' do
+        assert_source 'self.and'
       end
 
       context 'implicitly' do
