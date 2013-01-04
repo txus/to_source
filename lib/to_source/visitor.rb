@@ -1439,11 +1439,9 @@ module ToSource
     # @api private
     #
     def binary(node, symbol)
-      parantheses do
-        parantheses { dispatch(node.left) }
-        emit(" #{symbol} ")
-        parantheses { dispatch(node.right) }
-      end
+      parantheses { dispatch(node.left) }
+      emit(" #{symbol} ")
+      parantheses { dispatch(node.right) }
     end
 
     # Emit binary shortcut
@@ -1455,11 +1453,9 @@ module ToSource
     # @api private
     #
     def binary_shortcut(node, symbol)
-      parantheses do
-        dispatch(node.left)
-        emit(" #{symbol} ")
-        parantheses { dispatch(node.right.value) }
-      end
+      dispatch(node.left)
+      emit(" #{symbol} ")
+      parantheses { dispatch(node.right.value) }
     end
 
     # Emit or
@@ -1880,11 +1876,9 @@ module ToSource
 
       operand = node.arguments.array[0]
 
-      parantheses do
-       parantheses { dispatch(node.receiver) }
-       emit(" #{name.to_s} ")
-       parantheses { dispatch(operand) }
-      end
+      parantheses { dispatch(node.receiver) }
+      emit(" #{name.to_s} ")
+      parantheses { dispatch(operand) }
     end
   end
 end

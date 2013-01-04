@@ -594,56 +594,56 @@ describe ToSource::Visitor,'.run' do
   context 'binary operators' do
     %w(+ - * / & | && || << >> == === != <= < <=> > >= =~ !~ ^ **).each do |operator|
       context "on literals #{operator}" do
-        assert_source "((1) #{operator} (2))"
+        assert_source "(1) #{operator} (2)"
       end
 
       context "on self #{operator}" do
-        assert_source "((self) #{operator} (b))"
+        assert_source "(self) #{operator} (b)"
       end
 
       context "on calls #{operator}" do
-        assert_source "((a) #{operator} (b))"
+        assert_source "(a) #{operator} (b)"
       end
     end
 
     context 'binary operator and keywords' do
-      assert_source '((a) || (break(foo)))'
+      assert_source '(a) || (break(foo))'
     end
 
     context 'nested binary operators' do
-      assert_source '((a) || (((b) || (c))))'
+      assert_source '(a) || ((b) || (c))'
     end
   end
 
   context 'expansion of shortcuts' do
     context 'on += operator' do
-      assert_converts 'a = ((a) + (2))', 'a += 2'
+      assert_converts 'a = (a) + (2)', 'a += 2'
     end
 
     context 'on -= operator' do
-      assert_converts 'a = ((a) - (2))', 'a -= 2'
+      assert_converts 'a = (a) - (2)', 'a -= 2'
     end
 
     context 'on **= operator' do
-      assert_converts 'a = ((a) ** (2))', 'a **= 2'
+      assert_converts 'a = (a) ** (2)', 'a **= 2'
     end
 
     context 'on *= operator' do
-      assert_converts 'a = ((a) * (2))', 'a *= 2'
+      assert_converts 'a = (a) * (2)', 'a *= 2'
     end
 
     context 'on /= operator' do
-      assert_converts 'a = ((a) / (2))', 'a /= 2'
+      assert_converts 'a = (a) / (2)', 'a /= 2'
     end
   end
 
   context 'shortcuts' do
     context 'on &&= operator' do
-      assert_source '(a &&= (b))'
+      assert_source 'a &&= (b)'
     end
 
     context 'on ||= operator' do
-      assert_source '(a ||= (2))'
+      assert_source 'a ||= (2)'
     end
   end
 
