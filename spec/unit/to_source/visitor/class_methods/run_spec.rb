@@ -615,6 +615,12 @@ describe ToSource::Visitor,'.run' do
     end
   end
 
+  { :or => :'||', :and => :'&&' }.each do |word, symbol|
+    context "word form form equivalency of #{word} and #{symbol}" do
+      assert_converts "(a) #{symbol} (break(foo))", "a #{word} break foo"
+    end
+  end
+
   context 'expansion of shortcuts' do
     context 'on += operator' do
       assert_converts 'a = (a) + (2)', 'a += 2'
