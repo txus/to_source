@@ -1,6 +1,6 @@
-# v0.3.0 2013-01-4
+# v0.2.10 2013-01-7
 
-* [Changed] Rewrote internals compleatly
+* [Changed] Rewrote internals compleatly, no outer API change
 * [fixed] Emit indentation of complex nested structures with rescue statements correctly
 
 # v0.2.9 2013-01-4

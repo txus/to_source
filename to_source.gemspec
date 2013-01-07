@@ -1,15 +1,13 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name        = 'to_source'
-  s.version     = '0.2.9'
-  s.authors     = ['Josep M. Bach', 'Markus Schirp']
-  s.email       = ['josep.m.bach@gmail.com', 'mbj@seonic.net']
-  s.homepage    = 'http://github.com/txus/to_source'
-  s.summary     = %q{Transform your Rubinius AST nodes back to source code. Reverse parsing!}
-  s.description = %q{Transform your Rubinius AST nodes back to source code. Reverse parsing!}
-
+  s.version     = '0.2.10'
+  s.authors     = ['Markus Schirp']
+  s.email       = ['mbj@seonic.net']
+  s.homepage    = 'http://github.com/mbj/to_source'
+  s.summary     = %q{Transform Rubinius AST back to equvalent source code.}
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
