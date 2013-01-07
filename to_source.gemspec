@@ -5,10 +5,11 @@ Gem::Specification.new do |s|
   s.authors     = ['Markus Schirp']
   s.email       = ['mbj@seonic.net']
   s.homepage    = 'http://github.com/mbj/to_source'
-  s.summary     = %q{Transform Rubinius AST back to equvalent source code.}
+  s.summary     = %q{Transform Rubinius 1.9 AST back to equvalent source code.}
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.extra_rdoc_files = %w[LICENSE README.md TODO]
   s.require_paths = ['lib']
 
   s.add_dependency('adamantium',       '~> 0.0.3')

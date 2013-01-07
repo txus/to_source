@@ -5,7 +5,9 @@ to_source
 [![Dependency Status](https://gemnasium.com/mbj/to_source.png)](https://gemnasium.com/mbj/to_source)
 [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/mbj/to_source)
 
-Reverse parser to generate source code from the Rubinius AST. Also works well under MRI. 
+Reverse parser to generate source code from the Rubinius AST. Also works well under MRI using the mutant-melbourne gem.
+
+Currently only support 1.9 mode!
 
 Installation
 ------------
@@ -29,8 +31,9 @@ ast.to_source
 Credits
 -------
 
-* [Josep M. Bach (Txus)](http://txustice.me), [@txustice](http://twitter.com/txustice) on twitter
 * [Markus Schirp (mbj)](https://github.com/mbj), [@_m_b_j_](http://twitter.com/_m_b_j_) on twitter
+* [Josep M. Bach (Txus)](http://txustice.me), [@txustice](http://twitter.com/txustice) on twitter
+
 
 Contributing
 -------------
@@ -46,23 +49,4 @@ Contributing
 License
 -------
 
-Copyright (c) 2012 Josep M. Bach (Txus), Markus Schirp (mbj)
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+See LICENSE
