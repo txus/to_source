@@ -14,5 +14,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_dependency('adamantium',       '~> 0.0.3')
+  s.add_dependency('equalizer',        '~> 0.0.2')
+  s.add_dependency('abstract_type',    '~> 0.0.1')
   s.add_dependency('mutant-melbourne', '~> 2.0.3')
 end

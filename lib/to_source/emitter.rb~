@@ -1,0 +1,246 @@
+module ToSource
+
+  class Emitter
+    REGISTRY = {}
+
+    def self.handle(node_class)
+      REGISTRY[node_class]=self
+    end
+
+    def self.build(node, buffer = [])
+      REGISTRY.fetch(node.class).new(node, buffer)
+    end
+
+    def self.run(node)
+      build(node).source
+    end
+
+    def source
+      state = State.new
+      buffer.each do |command|
+        state.execute(command)
+      end
+      state.source
+    end
+
+    def push(command)
+      buffer.push(command)
+    end
+
+    def space
+      buffer.push(Command::Token::Delimiter::WHITESPACE)
+    end
+
+    def push_end
+      push(Command::Token::Keyword::END)
+    end
+
+    def indent
+      push(Command::Shift::INDENT)
+    end
+
+    def unindent
+      push(Command::Shift::UNINDENT)
+    end
+
+    def emit(name)
+      push(Command::Token.new(name))
+    end
+
+    def visit(node)
+      self.class.build(node, buffer)
+    end
+
+    attr_reader :node
+    attr_reader :buffer
+
+    def initialize(node, buffer)
+      @node, @buffer = node, buffer
+      dispatch
+    end
+
+    class Class < self
+
+      handle(Rubinius::AST::Class)
+
+    private
+
+      def dispatch
+        push(Command::Token::Keyword::CLASS)
+        space
+        visit(node.name)
+        superclass
+        indent
+        visit(node.body)
+        unindent
+        push_end
+      end
+
+      def superclass
+        superclass = node.superclass
+        return if superclass.kind_of?(Rubinius::AST::NilLiteral)
+        emit(' < ')
+        visit(superclass)
+      end
+    end
+
+    class Scope < self
+
+      handle(Rubinius::AST::ClassScope)
+      handle(Rubinius::AST::SClassScope)
+
+    private
+
+      def dispatch
+        visit(node.body)
+      end
+
+    end
+
+    class Send < self
+
+      handle(Rubinius::AST::Send)
+
+    private
+
+      def dispatch
+        emit(node.name)
+      end
+
+    end
+
+
+    class Define < self
+
+      handle(Rubinius::AST::Define)
+
+    private
+
+      def dispatch
+        emit('def ')
+        emit(node.name)
+        indent
+        visit(node.body)
+        unindent
+        push_end
+      end
+    end
+
+    class Block < self
+      
+      handle(Rubinius::AST::Block)
+
+    private
+
+      def dispatch
+        node.array.each do |node|
+          visit(node)
+        end
+      end
+
+    end
+
+    class RescueCondition < self
+
+      handle(Rubinius::AST::RescueCondition)
+
+    private
+
+      def dispatch
+        push(Command::Token::Keyword::RESCUE)
+        indent
+        visit(node.body)
+        unindent
+      end
+
+    end
+
+    class EmptyBody < self
+
+      handle(Rubinius::AST::EmptyBody)
+
+      def dispatch
+      end
+    end
+
+    class SClass < self
+
+      handle(Rubinius::AST::SClass)
+
+      def dispatch
+        push(Command::Token::Keyword::CLASS)
+        space
+        push(Command::Token::Operator::LSHIFT)
+        space
+        visit(node.receiver)
+        indent
+        # FIXME: attr_reader missing on Rubinius::AST::SClass
+        visit(node.instance_variable_get(:@body))
+        unindent
+        push_end
+      end
+
+    end
+
+    class Rescue < self
+      handle(Rubinius::AST::Rescue)
+
+    private
+
+      def dispatch
+        push(Command::Token::Keyword::BEGIN)
+        indent
+        visit(node.body)
+        unindent
+        visit(node.rescue)
+        push_end
+      end
+    end
+
+    class Literal < self
+
+      class Symbol < self
+
+        handle(Rubinius::AST::SymbolLiteral)
+
+        def dispatch
+          emit(":#{node.value}")
+        end
+      end
+    end
+
+    class ConstantAccess < self
+
+      handle(Rubinius::AST::ConstantAccess)
+
+      def dispatch
+        emit(node.name)
+      end
+    end
+
+    class Scoped < self
+
+      handle(Rubinius::AST::ScopedClassName)
+      handle(Rubinius::AST::ScopedConstant)
+
+      def dispatch
+        visit(node.parent)
+        emit('::')
+        emit(node.name)
+      end
+
+    end
+
+    class ClassName < self
+
+      handle(Rubinius::AST::ClassName)
+
+    private
+
+      def dispatch
+        emit(node.name)
+      end
+
+    end
+  end
+end

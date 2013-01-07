@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe ToSource::Visitor,'.run' do
-  subject { described_class.run(node) }
+describe ToSource,'.to_source' do
+  subject { described_class.to_source(node) }
 
   def compress(code)
     lines = code.split("\n")
@@ -21,7 +21,7 @@ describe ToSource::Visitor,'.run' do
     it 'should be able to round trip generated source also' do
       generated = subject
       ast = subject.to_ast
-      second = described_class.run(ast)
+      second = described_class.to_source(ast)
       generated.should eql(second)
     end
   end
@@ -45,6 +45,7 @@ describe ToSource::Visitor,'.run' do
     context 'simple' do
       assert_source <<-RUBY
         class TestClass
+
         end
       RUBY
     end
@@ -60,6 +61,7 @@ describe ToSource::Visitor,'.run' do
     context 'scoped' do
       assert_source <<-RUBY
         class SomeNameSpace::TestClass
+
         end
       RUBY
     end
@@ -67,6 +69,7 @@ describe ToSource::Visitor,'.run' do
     context 'deeply scoped' do
       assert_source <<-RUBY
         class Some::Name::Space::TestClass
+
         end
       RUBY
     end
@@ -74,6 +77,7 @@ describe ToSource::Visitor,'.run' do
     context 'with subclass' do
       assert_source <<-RUBY
         class TestClass < Object
+
         end
       RUBY
     end
@@ -81,6 +85,7 @@ describe ToSource::Visitor,'.run' do
     context 'with scoped superclass' do
       assert_source <<-RUBY
         class TestClass < SomeNameSpace::Object
+
         end
       RUBY
     end
@@ -98,6 +103,7 @@ describe ToSource::Visitor,'.run' do
     context 'toplevel' do
       assert_source <<-RUBY
         class ::TestClass
+
         end
       RUBY
     end
@@ -107,6 +113,7 @@ describe ToSource::Visitor,'.run' do
     context 'simple' do
       assert_source <<-RUBY 
         module TestModule
+
         end
       RUBY
     end
@@ -114,6 +121,7 @@ describe ToSource::Visitor,'.run' do
     context 'scoped' do
       assert_source <<-RUBY
         module SomeNameSpace::TestModule
+
         end
       RUBY
     end
@@ -121,6 +129,7 @@ describe ToSource::Visitor,'.run' do
     context 'deeply scoped' do
       assert_source <<-RUBY
         module Some::Name::Space::TestModule
+
         end
       RUBY
     end
@@ -860,9 +869,19 @@ describe ToSource::Visitor,'.run' do
   end
 
   context 'rescue' do
+    context 'as block' do
+      assert_source <<-RUBY
+        begin
+          foo
+          foo
+        rescue
+          bar
+        end
+      RUBY
+    end
     context 'without rescue condition' do
       assert_source <<-RUBY
-        def foo
+        begin
           bar
         rescue
           baz
@@ -870,10 +889,22 @@ describe ToSource::Visitor,'.run' do
       RUBY
     end
 
+    context 'within a block' do
+      assert_source <<-RUBY
+        foo do
+          begin
+            bar
+          rescue
+            baz
+          end
+        end
+      RUBY
+    end
+
     context 'with rescue condition' do
       context 'without assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError
             baz
@@ -883,7 +914,7 @@ describe ToSource::Visitor,'.run' do
 
       context 'with assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError => exception
             baz
@@ -895,7 +926,7 @@ describe ToSource::Visitor,'.run' do
     context 'with multivalued rescue condition' do
       context 'without assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError, SomeOtherError
             baz
@@ -905,7 +936,7 @@ describe ToSource::Visitor,'.run' do
 
       context 'with assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError, SomeOther => exception
             baz
@@ -916,7 +947,7 @@ describe ToSource::Visitor,'.run' do
 
     context 'with multiple rescue conditions' do
       assert_source <<-RUBY
-        def foo
+        begin
           foo
         rescue SomeError
           bar
@@ -929,7 +960,7 @@ describe ToSource::Visitor,'.run' do
     context 'with normal and splat condition' do
       context 'without assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError, *bar
             baz
@@ -939,7 +970,7 @@ describe ToSource::Visitor,'.run' do
 
       context 'with assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue SomeError, *bar => exception
             baz
@@ -951,7 +982,7 @@ describe ToSource::Visitor,'.run' do
     context 'with splat condition' do
       context 'without assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue *bar
             baz
@@ -961,7 +992,7 @@ describe ToSource::Visitor,'.run' do
 
       context 'with assignment' do
         assert_source <<-RUBY
-          def foo
+          begin
             bar
           rescue *bar => exception
             baz
@@ -977,7 +1008,7 @@ describe ToSource::Visitor,'.run' do
 
   context 'ensure' do
     assert_source <<-RUBY
-      def foo
+      begin
         bar
       ensure
         baz
@@ -987,7 +1018,7 @@ describe ToSource::Visitor,'.run' do
 
   context 'return' do
     context 'with expression' do
-      assert_source 'return 9'
+      assert_source 'return(9)'
     end
 
     context 'without expression' do
