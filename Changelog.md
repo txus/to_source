@@ -1,3 +1,8 @@
+# v0.3.0 2013-01-4
+
+* [Changed] Rewrote internals compleatly
+* [fixed] Emit indentation of complex nested structures with rescue statements correctly
+
 # v0.2.9 2013-01-4
 
 * [fixed] Handle regexp literals containing slashes in non shash delimiters %r(/) correctly

@@ -1,8 +1,8 @@
 * Do not emit parantheses around non keywords in binary operations (this will beautify source again)
-* Rewrite this library it is ultra hacky and adhoc 
+* Add YARD coverage again
+* Fix all dm2 metric tools issues
+* Mutation coverage!
 * Fix parsing errors from ruby parser
   It breaks on def $keyword.
-* Do a metric driven refactor once flay flog and friends work.
 * Report bug about missing Rubinius::AST::SClass#body
 * Decide about to support 18-mode or not
-* Fix emit of nested boolean uperators and parantheses!
